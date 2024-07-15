@@ -81,9 +81,6 @@
         <div class="response_detail">
             <h2>Response from {{ $responses->first()->user->name ?? 'Anonymous' }} - {{ $responses->first()->submitted_at }}</h2>
 
-            {{-- Debugging output --}}
-            <pre>{{ print_r($questions) }}</pre>
-            <pre>{{ print_r($responses) }}</pre>
 
             @foreach ($responses as $response)
                 @php
@@ -94,23 +91,21 @@
                 @if ($question)
                     <div class="question">
                         <h3>{{ $question->question_text }}</h3>
-                        @if (in_array($question->type, ['multiple_choice', 'checkbox', 'dropdown']))
-                            @if ($question->type == 'dropdown')
-                                <select disabled>
-                                    @foreach (json_decode($question->options) as $option)
-                                        <option {{ ($option == $response->answers) ? 'selected' : '' }}>
-                                            {{ $option }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            @else
+                        @if ($question->type == 'dropdown')
+                            <select disabled>
                                 @foreach (json_decode($question->options) as $option)
-                                    <p>
-                                        <input type="radio" disabled {{ in_array($option, (array)$decodedAnswers) ? 'checked' : '' }}>
+                                    <option {{ ($option == $decodedAnswers) ? 'selected' : '' }}>
                                         {{ $option }}
-                                    </p>
+                                    </option>
                                 @endforeach
-                            @endif
+                            </select>
+                        @elseif (in_array($question->type, ['multiple_choice', 'checkbox']))
+                            @foreach (json_decode($question->options) as $option)
+                                <p>
+                                    <input type="{{ $question->type == 'checkbox' ? 'checkbox' : 'radio' }}" disabled {{ in_array($option, (array)$decodedAnswers) ? 'checked' : '' }}>
+                                    {{ $option }}
+                                </p>
+                            @endforeach
                         @else
                             <p>{{ is_array($decodedAnswers) ? implode(', ', $decodedAnswers) : $decodedAnswers }}</p>
                         @endif
@@ -125,4 +120,5 @@
 </body>
 
 </html>
+
 

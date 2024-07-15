@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Log;
 use Ramsey\Uuid\Uuid;
 use App\Models\Form;
 use App\Models\Response;
@@ -35,6 +35,17 @@ class ResponseController extends Controller
     return view('responses.viewResponse', compact('form', 'responses', 'questions'));
 }
 
+public function viewResponses(Form $form)
+{
+    // Get all responses for the form, grouped by response_id
+    $responses = Response::where('form_id', $form->id)
+        ->orderBy('submitted_at', 'desc')
+        ->get()
+        ->groupBy('response_id');
+
+    return view('responses.viewResponses', compact('form', 'responses'));
+}
+
     public function showForm(Form $form)
     {
         $questions = $form->questions;
@@ -44,11 +55,15 @@ class ResponseController extends Controller
 
     public function submitForm(Request $request, Form $form)
 {
+    Log::info($request->all()); // Log the entire request data for debugging
+
     // Validate and process form submission
     $validatedData = $request->validate([
         'answers' => 'required|array',
         'answers.*' => 'required',
     ]);
+
+    Log::info($validatedData); // Log the validated data for debugging
 
     // Generate a UUID for response_id
     $responseId = Uuid::uuid4()->toString();
@@ -67,16 +82,5 @@ class ResponseController extends Controller
 
     return redirect()->route('responses.showForm', $form)
                      ->with('success', 'Response submitted successfully.');
-}
-    // View responses for the form owner
-    public function viewResponses(Form $form)
-{
-    // Get all responses for the form, grouped by response_id
-    $responses = Response::where('form_id', $form->id)
-        ->orderBy('submitted_at', 'desc')
-        ->get()
-        ->groupBy('response_id');
-
-    return view('responses.viewResponses', compact('form', 'responses'));
 }
 }

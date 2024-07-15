@@ -72,11 +72,15 @@
                             </label>
                         @endforeach
                     @elseif($question->type == 'dropdown')
-                        <select class="form-select mt-2 block w-full p-2 border border-gray-300 rounded-md bg-white shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                        <select class="form-select mt-2 block w-full p-2 border border-gray-300 rounded-md bg-white shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm" name="answers[{{ $question->id }}]">
                             @foreach (json_decode($question->options) as $option)
                                 <option value="{{ $option }}">{{ $option }}</option>
                             @endforeach
                         </select>
+                    @elseif($question->type == 'short_answer')
+                        <input type="text" name="answers[{{ $question->id }}]" class="form-input mt-2 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                    @elseif($question->type == 'long_answer')
+                        <textarea name="answers[{{ $question->id }}]" class="form-textarea mt-2 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"></textarea>
                     @endif
                 </div>
             @endforeach
@@ -87,3 +91,4 @@
         </form>
     </div>
 @endsection
+
