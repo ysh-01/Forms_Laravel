@@ -1,0 +1,252 @@
+.form_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 5px 15px;
+    background-color: #fff;
+}
+
+#moveableDiv {
+    transition: transform 1s ease;
+}
+
+.option {
+    position: relative;
+}
+
+.delete-option {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    display: none;
+}
+
+.option:hover .delete-option {
+    display: block;
+}
+
+.sidebar {
+    position: absolute;
+    top: 0;
+    left: 75%;
+    top: 10%;
+}
+
+.btnp {
+    border: none;
+    border-radius: 5px;
+    background-color: #f4f4f9;
+    color: grey;
+    padding: 5px 23px 5px 23px;
+}
+
+.btnn {
+    border: none;
+    border-radius: 5px;
+    background-color: #f4f4f9;
+    color: grey;
+    padding: 6px 23px 6px 23px;
+}
+
+.btn {
+    -webkit-border-radius: 7;
+    -moz-border-radius: 7;
+    border-radius: 5px;
+    font-family: Arial;
+    color: #ffffff;
+    font-size: 15px;
+    background: rgb(103, 58, 183);
+    padding: 5px 23px 5px 23px;
+    text-decoration: none;
+}
+
+.btn:hover {
+    background: rgb(116, 72, 192);
+    color: white;
+}
+
+.form_header_left {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 20%;
+}
+
+.form_name:focus {
+    border-bottom: 1px solid black;
+}
+
+.form_name {
+    border: none;
+    outline: none;
+    font-family: "Google Sans", "Roboto", "Ariel", "sans-serif";
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 24px;
+    margin-left: 15px;
+    color: #202124;
+    width: 120px;
+}
+
+.form_header_icon {
+    color: #202124;
+    font-size: 20px;
+}
+
+.form_header_right {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 30%;
+}
+
+.container {
+    max-width: 400px;
+    margin: 30px auto;
+}
+
+.box {
+    background-color: #fff;
+    overflow: hidden;
+}
+
+.tab-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    position: relative;
+}
+
+.tab-list::before {
+    content: "";
+    display: block;
+    height: 2px;
+    width: 33.333%;
+    position: absolute;
+    bottom: 0;
+    background-color: #aaa;
+    transition: 0.3s;
+}
+
+.tab-item {
+    flex: 1;
+    text-align: center;
+    transition: 0.3s;
+    opacity: 0.5;
+}
+
+.tab-toggle {
+    display: none;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-toggle:nth-child(1):checked ~ .tab-list .tab-item:nth-child(1),
+.tab-toggle:nth-child(2):checked ~ .tab-list .tab-item:nth-child(2),
+.tab-toggle:nth-child(3):checked ~ .tab-list .tab-item:nth-child(3) {
+    opacity: 5;
+    color: #731273;
+}
+
+.tab-toggle:nth-child(2):checked ~ .tab-list::before {
+    transform: translateX(100%);
+}
+
+.tab-toggle:nth-child(3):checked ~ .tab-list::before {
+    transform: translateX(200%);
+}
+
+.tab-toggle:nth-child(1):checked ~ .tab-container .tab-content:nth-child(1),
+.tab-toggle:nth-child(2):checked ~ .tab-container .tab-content:nth-child(2),
+.tab-toggle:nth-child(3):checked ~ .tab-container .tab-content:nth-child(3) {
+    display: block;
+}
+
+.tab-trigger {
+    display: block;
+    padding: 0;
+    color: #731273;
+}
+
+.tab-trigger:hover {
+    cursor: pointer;
+}
+
+.tab-container {
+    padding: 15px 30px;
+}
+
+.btnsub {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btnsave {
+    display: flex;
+    justify-content: space-between;
+}
+
+.question_form {
+    background-color: #f4f4f9;
+    height: 100%;
+    padding-bottom: 30px;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.section {
+    margin: auto;
+    width: 50%;
+}
+
+.question_form_top {
+    background-color: #fff;
+    border-top: 8px solid rgb(103, 58, 183);
+    border-radius: 8px;
+    padding: 30px 25px;
+    text-transform: capitalize;
+}
+
+.question_form_top_name {
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 135%;
+    width: 100%;
+    border: none;
+    outline: none;
+    border-bottom: 1px solid #f4f4f9;
+    color: black;
+    height: 35px;
+}
+
+.form_name {
+    color: rgb(32, 33, 36);
+}
+
+.question {
+    margin-bottom: 20px;
+}
+
+.question_form_top_desc {
+    box-sizing: border-box;
+    margin-top: 10px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 100%;
+    width: 100%;
+    border: none;
+    outline: none;
+    border-bottom: 1px solid #f4f4f9;
+    color: black;
+    height: 20px;
+}
