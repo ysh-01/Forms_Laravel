@@ -22,7 +22,7 @@
     </style>
 </head>
 
-<body style="background-color: white">
+<body class="bg-purple-100">
     <nav class="bg-white p-4 shadow-md">
         <div class="mx-auto flex justify-between">
             <a href="{{ url('/') }}" class="text-purple-600 text-3xl font-bold">LaraForms</a>
@@ -41,22 +41,24 @@
             </div>
         </div>
     </nav>
-    <div style="max-width: 600px;" class="mx-auto">
-        <br>
+    <br><br>
+    <div style="max-width: 800px; border-top: 10px solid rgb(103, 58, 183); border-radius: 8px;" class="mx-auto rounded-md bg-white">
         <h1>Edit Form</h1>
-        <form id="edit-form" method="POST" action="{{ route('forms.update', $form->id) }}">
+        <br>
+        <form id="edit-form" method="POST" action="{{ route('forms.update', $form->id) }}" class="px-2">
             @csrf
             @method('PUT')
             <div class="form-group">
-                <label for="form-title">Title</label>
-                <input type="text" id="form-title" name="title" class="form-control" value="{{ $form->title }}" required>
+                <input type="text" id="form-title" name="title" class="question_form_top_name form-control"
+                        style="color: black" placeholder="Untitled Form" value="{{$form->title}}"/>
             </div>
             <div class="form-group">
-                <label for="form-description">Description</label>
-                <input type="text" id="form-description" name="description" class="form-control" value="{{ $form->description }}">
+                <input type="text" name="description" id="form-description" class="question_form_top_desc"
+                        style="color: black" placeholder="Form Description" value="{{$form->description}}"/>
             </div>
             <div id="questions-section">
                 @foreach ($questions as $index => $question)
+                <div class="py-3">
                 <div class="question" data-index="{{ $index }}">
                     <input type="hidden" name="questions[{{ $index }}][id]" value="{{ $question->id }}">
                     <div class="form-group">
@@ -85,6 +87,7 @@
                     </div>
                     <button type="button" class="btn btn-danger" onclick="deleteQuestion(this)">Delete Question</button>
                 </div>
+            </div>
                 @endforeach
             </div>
             <button type="button" class="btn btn-primary" onclick="addNewQuestion()">Add New Question</button>
