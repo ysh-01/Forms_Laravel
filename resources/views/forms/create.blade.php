@@ -54,51 +54,47 @@
             </ul>
         </div>
     </div>
-    <div style="background-color: #f0ebf8" class="question_form">
-        <br />
+    <div class="question_form bg-light p-4 rounded shadow-sm">
         <div class="section">
-            <div class="question_title_section">
+            <div class="question_title_section mb-4">
                 <div class="question_form_top">
-                    <input type="text" id="form-title" name="title" class="question_form_top_name form-control"
-                        style="color: black" placeholder="Untitled Form" />
-                    <input type="text" name="description" id="form-description" class="question_form_top_desc"
-                        style="color: black" placeholder="Form Description" />
+                    <input type="text" id="form-title" name="title" class="form-control form-control-lg mb-2" placeholder="Untitled Form" />
+                    <input type="text" name="description" id="form-description" class="form-control form-control-sm" placeholder="Form Description" />
                 </div>
             </div>
         </div>
         <div class="section" id="questions_section">
-            <div class="question">
-                <select class="form-control question_type" onchange="changeQuestionType(this)">
+            <div class="question mb-4 p-3 border rounded bg-white">
+                <select class="form-control question_type mb-3" onchange="changeQuestionType(this)">
                     <option value="">Select Question Type</option>
                     <option value="multiple_choice">Multiple Choice</option>
                     <option value="checkbox">Checkbox</option>
                     <option value="dropdown">Dropdown</option>
                 </select>
-                <input type="text" name="question" class="form-control question-input"
-                    placeholder="Type your question here" />
-                <div class="options-container">
-                    <div class="option">
-                        <input type="text" name="option" class="form-control option-input"
-                            placeholder="Option 1" />
-                        <span class="delete-option" onclick="deleteOption(this)">&#10005;</span>
+                <input type="text" name="question" class="form-control question-input mb-3" placeholder="Type your question here" />
+                <div class="options-container mb-3">
+                    <div class="option d-flex align-items-center mb-2">
+                        <input type="text" name="option" class="form-control option-input" placeholder="Option 1" />
+                        <span class="delete-option ml-2 text-danger" onclick="deleteOption(this)" style="cursor: pointer;">&#10005;</span>
                     </div>
                 </div>
-                <button class="btn btn-secondary" onclick="addOption(this)">
+                <button class="btn btn-secondary mb-2" onclick="addOption(this)">
                     Add Option
                 </button>
-                <button class="btnn" id="moveUpButton" onclick="deleteQuestion(this);">
-                    <img src={{ asset('images/bin.png') }} alt="" width="20px" height="20px" />
+                <button class="btn btn-outline-danger btn-sm" id="moveUpButton" onclick="deleteQuestion(this);">
+                    <img src="{{ asset('images/bin.png') }}" alt="" width="20px" height="20px" />
                 </button>
             </div>
             <div class="sidebar">
                 <div id="moveableDiv">
-                    <button style="background-color: white"class="btnp" onclick="addNewQuestion(); moveDown()">
-                        <img src={{ asset('images/add.png') }} alt="" width="20px" height="20px" />
+                    <button class="btn btn-light shadow-sm" onclick="addNewQuestion();">
+                        <img src="{{ asset('images/add.png') }}" alt="" width="20px" height="20px" />
                     </button>
                 </div>
             </div>
         </div>
     </div>
+
     <div style="background-color: #f0ebf8"class="btnsub">
         <span>
             <button type="submit" name="save" value="save" onclick="saveForm()"

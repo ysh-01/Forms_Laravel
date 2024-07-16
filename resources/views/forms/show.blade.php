@@ -178,55 +178,42 @@
             </ul>
         </div>
     </div>
-    <form id="edit-form" method="POST" action="{{ route('forms.update', $form) }}">
-        @csrf
-        @method('PUT')
-        <div class="question_form">
-            <br />
-            <div class="section">
-                <div class="question_title_section">
-                    <div class="question_form_top">
-                        <input type="text" id="form-title" name="title" class="question_form_top_name form-control" style="color: black" placeholder="Untitled Form" value="{{ $form->title }}" readonly />
-                        <input type="text" name="description" id="form-description" class="question_form_top_desc" style="color: black" placeholder="Form Description" value="{{ $form->description }}" readonly />
-                    </div>
+    <div class="question_form bg-light p-4 rounded shadow-sm">
+        <div class="section">
+            <div class="question_title_section mb-4">
+                <div class="question_form_top">
+                    <input type="text" id="form-title" name="title" class="form-control form-control-lg mb-2" style="color: black" placeholder="Untitled Form" value="{{ $form->title }}" readonly />
+                    <input type="text" name="description" id="form-description" class="form-control form-control-sm" style="color: black" placeholder="Form Description" value="{{ $form->description }}" readonly />
                 </div>
             </div>
-            <div class="section" id="questions_section">
-                @foreach ($form->questions as $index => $question)
-                    <div class="question">
-                        <select class="form-control question_type" name="questions[{{ $index }}][type]" onchange="changeQuestionType(this)" disabled>
-                            <option value="multiple_choice" {{ $question->type === 'multiple_choice' ? 'selected' : '' }}>Multiple Choice</option>
-                            <option value="checkbox" {{ $question->type === 'checkbox' ? 'selected' : '' }}>Checkbox</option>
-                            <option value="dropdown" {{ $question->type === 'dropdown' ? 'selected' : '' }}>Dropdown</option>
-                        </select>
-                        <input type="text" name="questions[{{ $index }}][text]" class="form-control question-input" placeholder="Type your question here" value="{{ $question->question_text }}" readonly />
-                        @if ($question->options)
-                            <div class="options-container">
-                                @foreach (json_decode($question->options) as $optionIndex => $option)
-                                    <div class="option">
-                                        <input type="text" name="questions[{{ $index }}][options][{{ $optionIndex }}]" class="form-control option-input" placeholder="Option" value="{{ $option }}" readonly />
-                                    </div>
-                                @endforeach
-                            </div>
-                        @endif
-                    </div>
-                @endforeach
-            </div>
         </div>
-        <div class="btnsub">
-            <span>
-                <button type="submit" name="publish" value="publish" class="btnsave btn btn-secondary">
-                    {{ $form->is_published ? 'Unpublish' : 'Publish' }}
-                </button>
-            </span>
-            &nbsp;
-            &nbsp;
-            &nbsp;
-            <span>
-                <a href="{{ route('forms.index') }}" class="btnsave btn btn-secondary">Return to Forms</a>
-            </span>
+        <div class="section" id="questions_section">
+            @foreach ($form->questions as $index => $question)
+                <div class="question mb-4 p-3 border rounded bg-white">
+                    <select class="form-control question_type mb-3" name="questions[{{ $index }}][type]" onchange="changeQuestionType(this)" disabled>
+                        <option value="multiple_choice" {{ $question->type === 'multiple_choice' ? 'selected' : '' }}>Multiple Choice</option>
+                        <option value="checkbox" {{ $question->type === 'checkbox' ? 'selected' : '' }}>Checkbox</option>
+                        <option value="dropdown" {{ $question->type === 'dropdown' ? 'selected' : '' }}>Dropdown</option>
+                    </select>
+                    <input type="text" name="questions[{{ $index }}][text]" class="form-control question-input mb-3" placeholder="Type your question here" value="{{ $question->question_text }}" readonly />
+                    @if ($question->options)
+                        <div class="options-container mb-3">
+                            @foreach (json_decode($question->options) as $optionIndex => $option)
+                                <div class="option d-flex align-items-center mb-2">
+                                    <input type="text" name="questions[{{ $index }}][options][{{ $optionIndex }}]" class="form-control option-input" placeholder="Option" value="{{ $option }}" readonly />
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+            @endforeach
         </div>
-    </form>
+    </div>
+    <div class="btnsub text-center mt-4">
+        <span>
+            <a href="{{ route('forms.index') }}" class="btnsave btn btn-secondary">Return to Forms</a>
+        </span>
+    </div>
     <script src="{{ asset('js/script.js') }}"></script>
 </body>
 </html>
