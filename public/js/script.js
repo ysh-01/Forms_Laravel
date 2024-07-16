@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
           </div>
           <button class="btn btn-secondary" onclick="addOption(this)">Add Option</button>
           <button class="btnn" onclick="deleteQuestion(this)">
-            <img src={{asset("images/bin.png")}} alt="" width="20px" height="20px" />
+            <img src={{ asset('images/bin.png') }} alt="" width="20px" height="20px" />
           </button>
         `;
         questionsSection.appendChild(newQuestionDiv);
@@ -133,7 +133,7 @@ document.addEventListener("DOMContentLoaded", function () {
     window.changeQuestionType = changeQuestionType;
     window.saveForm = saveForm;
 
-    window.previewForm = function () {
+    window.previewForm = function (formId) {
         const formTitle = document.getElementById("form-title").value;
         const formDescription =
             document.getElementById("form-description").value;
@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function () {
             data: JSON.stringify(formData),
         });
 
-        window.open(`preview.html?${formParams.toString()}`, "_blank");
+        window.location.href = '/forms/' + formId + '/preview';
     };
 
     window.addNewQuestion = addNewQuestion;

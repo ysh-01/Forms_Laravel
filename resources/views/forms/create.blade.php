@@ -27,7 +27,7 @@
             <span><img src={{ asset('images/palette-svgrepo-com.svg') }} alt="pallette" height="20px"
                     width="20px" /></span>
             <span><img src={{ asset('images/view.png') }} alt="eye" height="20px" width="20px"
-                    onclick="previewForm()" /></span>
+                onclick="previewForm()" /></span>
             <span><img src={{ asset('images/undo.png') }} alt="" height="20px" width="20px" /></span>
             <span><img src={{ asset('images/forward.png') }} alt="" height="20px" width="20px" /></span>
             <button class="btn">Send</button>
@@ -54,7 +54,7 @@
             </ul>
         </div>
     </div>
-    <div class="question_form">
+    <div style="background-color: #f0ebf8" class="question_form">
         <br />
         <div class="section">
             <div class="question_title_section">
@@ -92,14 +92,14 @@
             </div>
             <div class="sidebar">
                 <div id="moveableDiv">
-                    <button class="btnp" onclick="addNewQuestion(); moveDown()">
+                    <button style="background-color: white"class="btnp" onclick="addNewQuestion(); moveDown()">
                         <img src={{ asset('images/add.png') }} alt="" width="20px" height="20px" />
                     </button>
                 </div>
             </div>
         </div>
     </div>
-    <div class="btnsub">
+    <div style="background-color: #f0ebf8"class="btnsub">
         <span>
             <button type="submit" name="save" value="save" onclick="saveForm()"
                 class="btnsave btn btn-secondary">

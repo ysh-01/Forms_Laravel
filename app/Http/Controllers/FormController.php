@@ -8,7 +8,7 @@ use App\Models\Question;
 use App\Models\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\Session;
 class FormController extends Controller
 {
     public function index()
@@ -64,7 +64,7 @@ return view('forms.edit', compact('form', 'questions'));
 
             $question->save();
         }
-
+        Session::flash('success', 'Form created successfully!');
         return response()->json(['success' => true, 'form_id' => $form->id]);
     }
 
@@ -75,6 +75,12 @@ return view('forms.edit', compact('form', 'questions'));
 
         return view('forms.show', compact('form'));
     }
+
+    public function preview($id)
+{
+    $form = Form::findOrFail($id);
+    return view('forms.previewForm', compact('form'));
+}
 
 
     public function update(Request $request, Form $form)
@@ -147,6 +153,6 @@ return view('forms.edit', compact('form', 'questions'));
         // This will also delete all related questions and responses due to foreign key constraints
         $form->delete();
 
-        return redirect()->route('forms.index')->with('success', 'Form deleted successfully.');
+        return redirect()->route('forms.index')->with('delete', 'Form deleted successfully.');
     }
 }

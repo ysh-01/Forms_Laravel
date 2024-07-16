@@ -21,6 +21,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/forms/{form}/edit', [FormController::class, 'edit'])->name('forms.edit');
     Route::put('/forms/{form}', [FormController::class, 'update'])->name('forms.update');
     Route::delete('/forms/{form}', [FormController::class, 'destroy'])->name('forms.destroy');
+    Route::get('/forms/{form}/preview', [FormController::class, 'preview'])->name('forms.preview');
+
 });
 
 // Response routes

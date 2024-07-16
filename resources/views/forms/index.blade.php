@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,20 +10,25 @@
         .dropdown:hover .dropdown-menu {
             display: block;
         }
+
         .shadow-custom {
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
     </style>
 </head>
-<body class="bg-gray-50">
+
+<body style="bg-gray-100">
     <nav class="bg-white p-4 shadow-lg">
         <div class="container mx-auto flex justify-between items-center">
-            <a href="{{ url('/') }}" style="color: rgb(103,58,183)" class="text-3xl font-bold font-sans">LaraForms</a>
+            <a href="{{ url('/') }}" style="color: rgb(103,58,183)"
+                class="text-3xl font-bold font-sans">LaraForms</a>
             <div class="relative dropdown">
                 <button id="profileMenuButton" class="flex items-center focus:outline-none">
-                    <img src="{{ asset('images/user.png') }}" alt="Profile" class="w-10 h-10 rounded-full border-2 border-white">
+                    <img src="{{ asset('images/user.png') }}" alt="Profile"
+                        class="w-10 h-10 rounded-full border-2 border-white">
                 </button>
-                <div id="profileMenu" class="dropdown-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2">
+                <div id="profileMenu"
+                    class="dropdown-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 w-full text-left">
@@ -33,10 +39,21 @@
             </div>
         </div>
     </nav>
-
+    @if (session('success'))
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded relative mt-4" role="alert">
+            <span class="block sm:inline">{{ session('success') }}</span>
+        </div>
+    @endif
+    @if (session('delete'))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded relative mt-4" role="alert">
+            <span class="block sm:inline">{{ session('delete') }}</span>
+        </div>
+    @endif
     <div class="container mx-auto mt-10">
         <div class="flex justify-between mb-6 items-center">
-            <a href="{{ route('forms.create') }}" class="inline-block px-6 py-3 text-white font-semibold rounded-md shadow bg-purple-700 hover:bg-purple-900 transition duration-200">Start a new form</a>
+            <a href="{{ route('forms.create') }}"
+                class="inline-block px-6 py-3 text-white font-semibold rounded-md shadow bg-purple-700 hover:bg-purple-900 transition duration-200">Start
+                a new form</a>
 
         </div>
         <h2 class="text-3xl font-semibold text-gray-800 font-sans">Recent Forms</h2>
@@ -48,30 +65,41 @@
                 <table class="min-w-full bg-white rounded-md overflow-hidden">
                     <thead class="bg-gray-100">
                         <tr>
-                            <th class="py-4 px-6 border-b border-gray-200 text-left text-sm font-semibold text-gray-600">Form Title</th>
-                            <th class="py-4 px-6 border-b border-gray-200 text-left text-sm font-semibold text-gray-600">Created At</th>
-                            <th class="py-4 px-6 border-b border-gray-200 text-left text-sm font-semibold text-gray-600">Responses</th>
-                            <th class="py-4 px-6 border-b border-gray-200 text-left text-sm font-semibold text-gray-600">Actions</th>
+                            <th
+                                class="py-4 px-6 border-b border-gray-200 text-left text-sm font-semibold text-gray-600">
+                                Form Title</th>
+                            <th
+                                class="py-4 px-6 border-b border-gray-200 text-left text-sm font-semibold text-gray-600">
+                                Created At</th>
+                            <th
+                                class="py-4 px-6 border-b border-gray-200 text-left text-sm font-semibold text-gray-600">
+                                Responses</th>
+                            <th
+                                class="py-4 px-6 border-b border-gray-200 text-left text-sm font-semibold text-gray-600">
+                                Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($forms as $form)
+                        @foreach ($forms as $form)
                             <tr class="hover:bg-gray-50 transition duration-150">
                                 <td class="py-4 px-6 border-b border-gray-200">
-                                    <a href="{{ route('forms.show', $form) }}" class="text-blue-600 font-semibold hover:underline">{{ $form->title }}</a>
+                                    <a href="{{ route('forms.show', $form) }}"
+                                        class="text-blue-600 font-semibold hover:underline">{{ $form->title }}</a>
                                     <p class="text-gray-600">{{ $form->description }}</p>
                                 </td>
-                                <td class="py-4 px-6 border-b border-gray-200">{{ $form->created_at->format('M d, Y') }}</td>
+                                <td class="py-4 px-6 border-b border-gray-200">{{ $form->created_at->format('M d, Y') }}
+                                </td>
                                 <td class="py-4 px-6 border-b border-gray-200">
-                                    @if ($form->is_published)
-                                        <a href="{{ route('responses.viewResponses', $form) }}" class="text-blue-500 hover:underline">View Responses</a>
-                                    @else
-                                        <span class="text-gray-600">Not Published</span>
-                                    @endif
+                                    <a href="{{ route('responses.viewResponses', $form) }}"
+                                        class="text-blue-500 hover:underline">View Responses</a>
                                 </td>
                                 <td class="py-8 px-6 border-b border-gray-200 flex items-center space-x-10">
-                                    <a href="{{ route('forms.edit', $form) }}" class="text-green-500 hover:underline">Edit</a>
-                                    <form action="{{ route('forms.destroy', $form) }}" method="POST" class="inline-block">
+                                    @if (!$form->is_published)
+                                        <a href="{{ route('forms.edit', $form) }}"
+                                            class="text-green-500 hover:underline">Edit</a>
+                                    @endif
+                                    <form action="{{ route('forms.destroy', $form) }}" method="POST"
+                                        class="inline-block">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="text-red-500 hover:underline">Delete</button>
@@ -89,13 +117,13 @@
         document.getElementById('profileMenuButton').addEventListener('click', function() {
             document.getElementById('profileMenu').classList.toggle('hidden');
         });
+        setTimeout(function() {
+            var successMessage = document.getElementById('successMessage');
+            if (successMessage) {
+                successMessage.remove();
+            }
+        }, 3000);
     </script>
 </body>
+
 </html>
-
-
-
-
-
-
-

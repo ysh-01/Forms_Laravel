@@ -49,6 +49,9 @@ public function viewResponses(Form $form)
     public function showForm(Form $form)
     {
         $questions = $form->questions;
+        if (!$form->is_published) {
+            return redirect('/forms')->with('delete', 'This form is not published.');
+        }
 
         return view('responses.showForm', compact('form', 'questions'));
     }
