@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
 </head>
 
-<body style="background-color: #f0ebf8" class="font-roboto text-gray-800">
+<body style="background-color: rgb(253, 251, 251)" class="font-roboto text-gray-800">
 
     <!-- Header -->
     <div class="bg-white shadow-md px-6 py-4 flex justify-between items-center">
@@ -55,16 +55,16 @@
         @else
         <div class="overflow-x-auto">
             <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-                <thead class="bg-gray-200 text-gray-600 text-sm leading-normal">
+                <thead class="bg-gray-200 text-black text-sm leading-normal">
                     <tr>
                         <th class="py-3 px-6 text-left">User</th>
                         <th class="py-3 px-6 text-left">Submitted At</th>
                         <th class="py-3 px-6 text-left">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="text-gray-600 text-sm font-light">
+                <tbody class="text-black text-sm font-light">
                     @foreach ($responses as $responseGroup)
-                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                    <tr class="border-b border-gray-200 text-gray-700   hover:bg-gray-100">
                         <td class="py-3 px-6 text-left">
                             {{ $responseGroup->first()->user->name ?? 'Anonymous' }}
                         </td>
@@ -74,7 +74,7 @@
                         <td class="py-3 px-6 text-left">
                             <a href="{{ route('responses.viewResponse', ['form' => $form, 'responseId' => $responseGroup->first()->response_id]) }}"
                                 target="_blank"
-                                class="text-blue-600 hover:text-blue-700 focus:outline-none">View Response</a>
+                                class="text-blue-600 hover:text-blue-700 hover:underline focus:outline-none">View Response</a>
                         </td>
                     </tr>
                     @endforeach

@@ -21,43 +21,43 @@
 </head>
 
 <body class="bg-light">
-    <div class="form_header shadow-md px-6 py-4 flex justify-between items-center" style="padding: 20px;">
-        <div class="form_header_left">
-            <img src={{ asset('images/google-form.png') }} class="form_header_icon" height="45px" width="40px" />
-            <input type="text" name="title" id="form-title-nav" placeholder="Untitled Form" class="form_name" />
-            <img src={{ asset('images/folder.png') }} alt="" class="form_header_icon" height="20px"
-                width="20px" />
-            <img src={{ asset('images/star.svg') }} alt="" class="form_header_icon" />
+    <nav class="bg-white p-1 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <span style="color: rgb(103,58,183)" class="text-3xl font-bold font-sans"><a href="{{ url('/') }}" style="color: rgb(103,58,183)"
+                class="text-3xl font-bold font-sans">LaraForms</a> - Edit</span>
+            <div class="relative dropdown">
+                <button id="profileMenuButton" class="flex items-center focus:outline-none">
+                    <img src="{{ asset('images/user.png') }}" alt="Profile"
+                        class="w-10 h-10 rounded-full border-2 border-white">
+                </button>
+                <div id="profileMenu"
+                    class="dropdown-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2">
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 w-full text-left">
+                            Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="form_header_right">
-            <span><img src={{ asset('images/palette-svgrepo-com.svg') }} alt="pallette" height="20px"
-                    width="20px" /></span>
-            <span><img src={{ asset('images/view.png') }} alt="eye" height="20px" width="20px"
-                onclick="previewForm()" /></span>
-            <span><img src={{ asset('images/undo.png') }} alt="" height="20px" width="20px" /></span>
-            <span><img src={{ asset('images/forward.png') }} alt="" height="20px" width="20px" /></span>
-            <button class="btn">Send</button>
-            <span><img src={{ asset('images/menu.png') }} alt="menu" height="30px" width="30px" /></span>
-            <span><img src={{ asset('images/user.png') }} alt="" height="30px" width="30px" /></span>
-        </div>
-    </div>
-
+    </nav>
 
     <div style="max-width: 700px" class="container">
         <form id="edit-form" method="POST" action="{{ route('forms.update', $form) }}" class="bg-white p-4 rounded shadow-sm">
             @csrf
             @method('PUT')
             <div class="form-group">
-                <input type="text" id="form-title" name="title" class="form-control form-control-lg mb-2" placeholder="Untitled Form" value="{{ $form->title }}" />
+                <input type="text" id="form-title" name="title" class="form-control form-control-lg text-black" placeholder="Untitled Form" value="{{ $form->title }}" />
             </div>
             <div class="form-group">
-                <input type="text" name="description" id="form-description" class="form-control form-control-sm" placeholder="Form Description" value="{{ $form->description }}" />
+                <input type="text" name="description" id="form-description" class="form-control form-control-sm text-black" placeholder="Form Description" value="{{ $form->description }}" />
             </div>
             <div id="questions-section">
                 @foreach ($questions as $index => $question)
                     <div class="question mb-4 p-3 border rounded bg-light" data-index="{{ $index }}">
                         <div class="form-group">
-                            <label for="question-type-{{ $index }}">Question Type</label>
+                            {{-- <label for="question-type-{{ $index }}">Question Type</label> --}}
                             <select class="form-control question-type" id="question-type-{{ $index }}" name="questions[{{ $index }}][type]">
                                 <option value="multiple_choice" {{ $question->type === 'multiple_choice' ? 'selected' : '' }}>Multiple Choice</option>
                                 <option value="checkbox" {{ $question->type === 'checkbox' ? 'selected' : '' }}>Checkbox</option>
@@ -65,7 +65,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="question-text-{{ $index }}">Question Text</label>
+                            {{-- <label for="question-text-{{ $index }}">Question Text</label> --}}
                             <input type="text" id="question-text-{{ $index }}" name="questions[{{ $index }}][text]" class="form-control question-input" value="{{ $question->question_text }}" required>
                         </div>
                         <div class="form-group options-container">

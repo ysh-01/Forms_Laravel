@@ -227,6 +227,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function deleteOption(span) {
+        console.log("Yash");
         const optionDiv = span.parentElement;
         optionDiv.remove();
         updateAddButtonPosition();
@@ -247,7 +248,7 @@ document.addEventListener("DOMContentLoaded", function () {
         newQuestionDiv.className = "question";
         newQuestionDiv.innerHTML = `
           <div class="question mb-4 p-3 border rounded bg-white">
-                <select class="form-control question_type mb-3" onchange="changeQuestionType(this)">
+                <select class="form-control question_type mb-1" onchange="changeQuestionType(this)">
                     <option value="">Select Question Type</option>
                     <option value="multiple_choice">Multiple Choice</option>
                     <option value="checkbox">Checkbox</option>
@@ -255,16 +256,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 </select>
                 <input type="text" name="question" class="form-control question-input mb-3" placeholder="Type your question here" />
                 <div class="options-container mb-3">
-                    <div class="option d-flex align-items-center mb-2">
+                    <div class="option d-flex align-items-center">
                         <input type="text" name="option" class="form-control option-input" placeholder="Option 1" />
                         <span class="delete-option ml-2 text-danger" onclick="deleteOption(this)" style="cursor: pointer;">&#10005;</span>
                     </div>
                 </div>
-                <button class="btn btn-secondary mb-2" onclick="addOption(this)">
+                <button class="btn btn-secondary" onclick="addOption(this)">
                     Add Option
                 </button>
-                <button class="btn btn-outline-danger btn-sm" id="moveUpButton" onclick="deleteQuestion(this);">
-                    <img src="public/images/bin.png" alt="" width="20px" height="20px" />
+                <button class="btn btn-md" id="moveUpButton" onclick="deleteQuestion(this);">
+                    <img src="/images/bin.png" alt="" width="20px" height="20px" />
                 </button>
             </div>
         `;
@@ -277,29 +278,36 @@ document.addEventListener("DOMContentLoaded", function () {
         let questionContainer = element.closest(".question");
         if (questionContainer) {
             questionContainer.remove();
+            questionCount--;
             updateAddButtonPosition();
         }
     }
 
     function updateAddButtonPosition() {
         const questions = questionsSection.querySelectorAll(".question");
-        const lastQuestion = questions[questions.length - 1];
+    const sidebar = document.getElementById("moveableDiv");
 
-        if (lastQuestion) {
-            const selectQuestionType = lastQuestion.querySelector(".question_type");
-            if (selectQuestionType) {
-                const sidebar = document.getElementById("moveableDiv");
-                const offset = selectQuestionType.offsetTop - sidebar.offsetHeight;
-                sidebar.style.transform = `translateY(${offset}px)`;
-                console.log(`Moving sidebar to: ${offset}px`);
-            } else {
-                console.warn("No .question_type found in last question.");
-            }
+    if (questions.length > 0) {
+        const lastQuestion = questions[questions.length - 1];
+        const offsetTop = lastQuestion.offsetTop;
+        const sidebarHeight = sidebar.offsetHeight;
+        const containerHeight = questionsSection.offsetHeight;
+
+        // Calculate the position of the last question relative to the top of the container
+        const newPosition = offsetTop + lastQuestion.offsetHeight;
+
+        // Ensure the sidebar stays within the bounds of the container
+        if (newPosition + sidebarHeight <= containerHeight) {
+            sidebar.style.transform = `translateY(${newPosition}px)`;
+            console.log(`Moving sidebar to: ${newPosition}px`);
         } else {
-            const sidebar = document.getElementById("moveableDiv");
-            sidebar.style.transform = `translateY(0px)`;
-            console.log(`Moving sidebar to: 0px`);
+            sidebar.style.transform = `translateY(${containerHeight - sidebarHeight}px)`;
+            console.log(`Moving sidebar to bottom of container`);
         }
+    } else {
+        sidebar.style.transform = `translateY(0px)`;
+        console.log("No questions, moving sidebar to top");
+    }
     }
 
     function saveForm() {
@@ -369,6 +377,7 @@ document.addEventListener("DOMContentLoaded", function () {
     window.addNewQuestion = addNewQuestion;
     window.deleteQuestion = deleteQuestion;
     window.addOption = addOption;
+    window.deleteOption = deleteOption;
     window.changeQuestionType = changeQuestionType;
     window.saveForm = saveForm;
 
