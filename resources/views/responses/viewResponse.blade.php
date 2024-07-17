@@ -159,7 +159,6 @@
                 @endforeach
             </div>
         </div>
-
         <!-- Statistics Section -->
         <div style="max-width: 800px" class="container statistics bg-light p-4 rounded shadow-sm" id="statistics_section" style="display: none;">
             <h3>Statistics</h3>
