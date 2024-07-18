@@ -16,9 +16,6 @@
     <!-- Header -->
     <div class="bg-white shadow-md px-6 py-4 flex justify-between items-center">
         <div class="flex items-center">
-            <a href="/forms" class="mr-4">
-                <img src="{{ asset('images/google-form.png') }}" alt="Google Forms" class="h-12 w-auto">
-            </a>
             <h1 class="text-2xl font-semibold text-purple-900">{{ $form->title }} - Responses</h1>
         </div>
         <div class="flex items-center">
@@ -72,7 +69,8 @@
                     <thead class="bg-gray-200 text-black text-sm leading-normal">
                         <tr>
                             <th class="py-3 px-6 text-left">User</th>
-                            <th class="py-3 px-6 text-left">Submitted At</th>
+                            <th class="py-3 px-6 text-left">Email ID</th>
+                            <th class="py-3 px-6 text-left">Submitted</th>
                             <th class="py-3 px-6 text-left">Actions</th>
                         </tr>
                     </thead>
@@ -81,6 +79,9 @@
                         <tr class="border-b border-gray-200 text-gray-700 hover:bg-gray-100">
                             <td class="py-3 px-6 text-left">
                                 {{ $responseGroup->first()->user->name ?? 'Anonymous' }}
+                            </td>
+                            <td class="py-3 px-6 text-left">
+                                {{ $responseGroup->first()->user->email ?? 'NA'}}
                             </td>
                             <td class="py-3 px-6 text-left">
                                 {{ $responseGroup->first()->created_at->diffForHumans()}}
@@ -182,7 +183,7 @@
                     data: {
                         labels: labels,
                         datasets: [{
-                            label: '# of Responses',
+                            label: 'Responses',
                             data: data,
                             backgroundColor: backgroundColors,
                             borderColor: backgroundColors.map(color => color.replace('0.5', '1')),

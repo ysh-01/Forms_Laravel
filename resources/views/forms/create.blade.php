@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Google-Form-Clone</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href={{ asset('css/app.css') }} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -15,45 +16,27 @@
 </head>
 
 <body>
-    <div class="form_header">
-        <div class="form_header_left">
-            <img src={{ asset('images/google-form.png') }} class="form_header_icon" height="45px" width="40px" />
-            <input type="text" name="title" id="form-title-nav" placeholder="Untitled Form" class="form_name" />
-            <img src={{ asset('images/folder.png') }} alt="" class="form_header_icon" height="20px"
-                width="20px" />
-            <img src={{ asset('images/star.svg') }} alt="" class="form_header_icon" />
+    <nav class="bg-white p-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="{{ url('/') }}" style="color: rgb(103,58,183)"
+                class="text-3xl font-bold font-sans">LaraForms</a>
+            <div class="relative dropdown">
+                <button id="profileMenuButton" class="flex items-center focus:outline-none">
+                    <img src="{{ asset('images/user.png') }}" alt="Profile"
+                        class="w-10 h-10 rounded-full border-2 border-white">
+                </button>
+                <div id="profileMenu"
+                    class="dropdown-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2">
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 w-full text-left">
+                            Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="form_header_right">
-            <span><img src={{ asset('images/palette-svgrepo-com.svg') }} alt="pallette" height="20px"
-                    width="20px" /></span>
-            <span><img src={{ asset('images/view.png') }} alt="eye" height="20px" width="20px"
-                onclick="previewForm()" /></span>
-            <span><img src={{ asset('images/undo.png') }} alt="" height="20px" width="20px" /></span>
-            <span><img src={{ asset('images/forward.png') }} alt="" height="20px" width="20px" /></span>
-            <button class="btn">Send</button>
-            <span><img src={{ asset('images/menu.png') }} alt="menu" height="30px" width="30px" /></span>
-            <span><img src={{ asset('images/user.png') }} alt="" height="30px" width="30px" /></span>
-        </div>
-    </div>
-    <div class="container">
-        <div class="box">
-            <input type="radio" class="tab-toggle" name="tab-toggle" id="tab1" checked />
-            <input type="radio" class="tab-toggle" name="tab-toggle" id="tab2" />
-            <input type="radio" class="tab-toggle" name="tab-toggle" id="tab3" />
-
-            <ul class="tab-list">
-                <li class="tab-item">
-                    <label class="tab-trigger" for="tab1"><b>Questions</b></label>
-                </li>
-                <li class="tab-item">
-                    <label class="tab-trigger" for="tab2"><b>Responses</b></label>
-                </li>
-                <li class="tab-item">
-                    <label class="tab-trigger" for="tab3"><b>Settings</b></label>
-                </li>
-            </ul>
-        </div>
-    </div>
+    </nav>
     <div style="background-color: #f0ebf8; max-width: 100%" class="question_form p-4 rounded">
         <div class="section">
             <div class="question_title_section mb-1">

@@ -182,10 +182,10 @@
 
                 const newPosition = offsetTop + lastQuestion.offsetHeight;
                 if (newPosition + sidebarHeight <= containerHeight) {
-                    sidebar.style.transform = `translateY(${newPosition}px)`;
-                    console.log(`Moving sidebar to: ${newPosition}px`);
+                    sidebar.style.transform = `translateY(${newPosition + 75}px)`;
+                    console.log(`Moving sidebar to: ${newPosition + 75}px`);
                 } else {
-                    sidebar.style.transform = `translateY(${containerHeight - sidebarHeight}px)`;
+                    sidebar.style.transform = `translateY(${containerHeight - sidebarHeight + 75}px)`;
                     console.log(`Moving sidebar to bottom of container`);
                 }
             } else {
