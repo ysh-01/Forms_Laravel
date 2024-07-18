@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Models\Form;
 use App\Models\User;
@@ -9,6 +10,7 @@ use App\Models\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
+
 class FormController extends Controller
 {
     public function index()
@@ -24,16 +26,16 @@ class FormController extends Controller
     }
 
     public function edit(Form $form)
-{
-    // Questions are already fetched with their options cast to array due to the casts property
-    $questions = $form->questions;
-foreach ($questions as $question) {
-    $question->options = json_decode($question->options, true);
-}
+    {
+        // Questions are already fetched with their options cast to array due to the casts property
+        $questions = $form->questions;
+        foreach ($questions as $question) {
+            $question->options = json_decode($question->options, true);
+        }
 
-// Pass the questions to the view
-return view('forms.edit', compact('form', 'questions'));
-}
+        // Pass the questions to the view
+        return view('forms.edit', compact('form', 'questions'));
+    }
 
 
 
@@ -72,15 +74,14 @@ return view('forms.edit', compact('form', 'questions'));
     public function show(Form $form)
     {
         $form->load('questions.responses');
-
         return view('forms.show', compact('form'));
     }
 
     public function preview($id)
-{
-    $form = Form::findOrFail($id);
-    return view('forms.previewForm', compact('form'));
-}
+    {
+        $form = Form::findOrFail($id);
+        return view('forms.previewForm', compact('form'));
+    }
 
 
     public function update(Request $request, Form $form)

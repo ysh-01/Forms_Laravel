@@ -32,8 +32,27 @@ class ResponseController extends Controller
     // Get all questions for the form
     $questions = Question::where('form_id', $form->id)->get()->keyBy('id');
 
-    return view('responses.viewResponse', compact('form', 'responses', 'questions'));
+    // Aggregate data for statistics
+    $statistics = [];
+    foreach ($questions as $question) {
+        $statistics[$question->id] = [
+            'question_text' => $question->question_text,
+            'type' => $question->type,
+            'options' => json_decode($question->options),
+            'responses' => []
+        ];
+
+        foreach ($responses as $response) {
+            $decodedAnswers = json_decode($response->answers, true);
+            if (isset($decodedAnswers[$question->id])) {
+                $statistics[$question->id]['responses'][] = $decodedAnswers[$question->id];
+            }
+        }
+    }
+
+    return view('responses.viewResponse', compact('form', 'responses', 'questions', 'statistics'));
 }
+
 
 public function viewResponses(Form $form)
 {
@@ -43,8 +62,32 @@ public function viewResponses(Form $form)
         ->get()
         ->groupBy('response_id');
 
-    return view('responses.viewResponses', compact('form', 'responses'));
+    // Get all questions for the form
+    $questions = Question::where('form_id', $form->id)->get()->keyBy('id');
+
+    // Aggregate data for statistics
+    $statistics = [];
+    foreach ($questions as $question) {
+        $statistics[$question->id] = [
+            'question_text' => $question->question_text,
+            'type' => $question->type,
+            'options' => json_decode($question->options, true),
+            'responses' => [],
+        ];
+
+        foreach ($responses as $responseGroup) {
+            foreach ($responseGroup as $response) {
+                $decodedAnswers = json_decode($response->answers, true);
+                if (isset($decodedAnswers[$question->id])) {
+                    $statistics[$question->id]['responses'][] = $decodedAnswers[$question->id];
+                }
+            }
+        }
+    }
+
+    return view('responses.viewResponses', compact('form', 'responses', 'statistics'));
 }
+
 
     public function showForm(Form $form)
     {

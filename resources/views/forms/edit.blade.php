@@ -10,9 +10,9 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+        rel="stylesheet">
     <style>
         .shadow-custom {
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
@@ -23,8 +23,8 @@
 <body class="bg-light">
     <nav class="bg-white p-1 shadow-md">
         <div class="container mx-auto flex justify-between items-center">
-            <span style="color: rgb(103,58,183)" class="text-3xl font-bold font-sans"><a href="{{ url('/') }}" style="color: rgb(103,58,183)"
-                class="text-3xl font-bold font-sans">LaraForms</a> - Edit</span>
+            <span style="color: rgb(103,58,183)" class="text-3xl font-bold font-sans"><a href="{{ url('/') }}"
+                    style="color: rgb(103,58,183)" class="text-3xl font-bold font-sans">LaraForms</a> - Edit</span>
             <div class="relative dropdown">
                 <button id="profileMenuButton" class="flex items-center focus:outline-none">
                     <img src="{{ asset('images/user.png') }}" alt="Profile"
@@ -34,9 +34,8 @@
                     class="dropdown-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 w-full text-left">
-                            Logout
-                        </button>
+                        <button type="submit"
+                            class="block px-4 py-2 text-gray-700 hover:bg-gray-200 w-full text-left">Logout</button>
                     </form>
                 </div>
             </div>
@@ -44,45 +43,68 @@
     </nav>
 
     <div style="max-width: 700px" class="container">
-        <form id="edit-form" method="POST" action="{{ route('forms.update', $form) }}" class="bg-white p-4 rounded shadow-sm">
+        <form id="edit-form" method="POST" action="{{ route('forms.update', $form) }}"
+            class="bg-white p-4 rounded shadow-sm">
             @csrf
             @method('PUT')
             <div class="form-group">
-                <input type="text" id="form-title" name="title" class="form-control form-control-lg text-black" placeholder="Untitled Form" value="{{ $form->title }}" />
+                <input type="text" id="form-title" name="title" class="form-control form-control-lg text-black"
+                    placeholder="Untitled Form" value="{{ $form->title }}" />
             </div>
             <div class="form-group">
-                <input type="text" name="description" id="form-description" class="form-control form-control-sm text-black" placeholder="Form Description" value="{{ $form->description }}" />
+                <input type="text" name="description" id="form-description"
+                    class="form-control form-control-sm text-black" placeholder="Form Description"
+                    value="{{ $form->description }}" />
             </div>
             <div id="questions-section">
                 @foreach ($questions as $index => $question)
                     <div class="question mb-4 p-3 border rounded bg-light" data-index="{{ $index }}">
                         <div class="form-group">
-                            {{-- <label for="question-type-{{ $index }}">Question Type</label> --}}
-                            <select class="form-control question-type" id="question-type-{{ $index }}" name="questions[{{ $index }}][type]">
-                                <option value="multiple_choice" {{ $question->type === 'multiple_choice' ? 'selected' : '' }}>Multiple Choice</option>
-                                <option value="checkbox" {{ $question->type === 'checkbox' ? 'selected' : '' }}>Checkbox</option>
-                                <option value="dropdown" {{ $question->type === 'dropdown' ? 'selected' : '' }}>Dropdown</option>
+                            <select class="form-control question-type" id="question-type-{{ $index }}"
+                                name="questions[{{ $index }}][type]">
+                                <option value="multiple_choice"
+                                    {{ $question->type === 'multiple_choice' ? 'selected' : '' }}>Multiple Choice
+                                </option>
+                                <option value="checkbox" {{ $question->type === 'checkbox' ? 'selected' : '' }}>
+                                    Checkbox</option>
+                                <option value="dropdown" {{ $question->type === 'dropdown' ? 'selected' : '' }}>
+                                    Dropdown</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            {{-- <label for="question-text-{{ $index }}">Question Text</label> --}}
-                            <input type="text" id="question-text-{{ $index }}" name="questions[{{ $index }}][text]" class="form-control question-input" value="{{ $question->question_text }}" required>
+                            <input type="text" id="question-text-{{ $index }}"
+                                name="questions[{{ $index }}][text]" class="form-control question-input"
+                                value="{{ $question->question_text }}" required>
                         </div>
                         <div class="form-group options-container">
                             <label>Options</label>
-                            @if(is_array($question->options))
+                            @if (is_array($question->options))
                                 @foreach ($question->options as $optionIndex => $option)
                                     <div class="option d-flex align-items-center mb-2">
-                                        <input type="text" name="questions[{{ $index }}][options][{{ $optionIndex }}]" class="form-control option-input" value="{{ $option }}">
-                                        <span class="delete-option ml-2 text-danger" onclick="deleteOption(this)" style="cursor: pointer;">&#10005;</span>
+                                        <input type="text"
+                                            name="questions[{{ $index }}][options][{{ $optionIndex }}]"
+                                            class="form-control option-input" value="{{ $option }}">
+                                        <span class="delete-option ml-2 text-danger" onclick="deleteOption(this)"
+                                            style="cursor: pointer;">&#10005;</span>
                                     </div>
                                 @endforeach
                             @endif
-                            <button type="button" class="btn btn-secondary" onclick="addOption(this)">Add Option</button>
+                            <button type="button" class="btn btn-secondary" onclick="addOption(this)">Add
+                                Option</button>
+                            <button class="btn btn-md" id="moveUpButton" onclick="deleteQuestion(this);">
+                                <img src="{{ asset('images/bin.png') }}" alt="" width="20px"
+                                    height="20px" />
+                            </button>
                         </div>
-                        <button type="button" class="btn btn-danger btn-sm" onclick="deleteQuestion(this)">Delete Question</button>
                     </div>
                 @endforeach
+                <div class="sidebar">
+                    <div id="moveableDiv">
+                        <button class="btn btn-light shadow-sm" type="button" onclick="addNewQuestion();">
+                            <img src="{{ asset('images/add.png') }}" alt="ADD" width="20px" height="20px" />
+                        </button>
+                    </div>
+                </div>
             </div>
             <button type="button" class="btn btn-primary mb-4" onclick="addNewQuestion()">Add New Question</button>
             <button type="submit" class="btn btn-success mb-4">Save</button>
@@ -105,10 +127,12 @@
             `;
 
             optionsContainer.append(optionHtml);
+            updateAddButtonPosition();
         }
 
         function deleteOption(button) {
             $(button).closest('.option').remove();
+            updateAddButtonPosition();
         }
 
         function addNewQuestion() {
@@ -118,7 +142,6 @@
             const questionHtml = `
                 <div class="question mb-4 p-3 border rounded bg-light" data-index="${questionIndex}">
                     <div class="form-group">
-                        <label for="question-type-${questionIndex}">Question Type</label>
                         <select class="form-control question-type" id="question-type-${questionIndex}" name="questions[${questionIndex}][type]">
                             <option value="multiple_choice">Multiple Choice</option>
                             <option value="checkbox">Checkbox</option>
@@ -126,46 +149,64 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="question-text-${questionIndex}">Question Text</label>
                         <input type="text" id="question-text-${questionIndex}" name="questions[${questionIndex}][text]" class="form-control question-input" placeholder="Type your question here" required>
                     </div>
                     <div class="form-group options-container">
                         <label>Options</label>
                         <button type="button" class="btn btn-secondary" onclick="addOption(this)">Add Option</button>
                     </div>
-                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteQuestion(this)">Delete Question</button>
+                    <button class="btn btn-md" id="moveUpButton" onclick="deleteQuestion(this);">
+                                <img src="{{ asset('images/bin.png') }}" alt="" width="20px" height="20px" />
+                    </button>
                 </div>
             `;
 
             questionsSection.append(questionHtml);
+            updateAddButtonPosition();
         }
 
         function deleteQuestion(button) {
             $(button).closest('.question').remove();
+            updateAddButtonPosition();
+        }
+
+        function updateAddButtonPosition() {
+            const questions = document.querySelectorAll("#questions-section .question");
+            const sidebar = document.getElementById("moveableDiv");
+
+            if (questions.length > 0) {
+                const lastQuestion = questions[questions.length - 1];
+                const offsetTop = lastQuestion.offsetTop;
+                const sidebarHeight = sidebar.offsetHeight;
+                const containerHeight = document.getElementById("questions-section").offsetHeight;
+
+                const newPosition = offsetTop + lastQuestion.offsetHeight;
+                if (newPosition + sidebarHeight <= containerHeight) {
+                    sidebar.style.transform = `translateY(${newPosition}px)`;
+                    console.log(`Moving sidebar to: ${newPosition}px`);
+                } else {
+                    sidebar.style.transform = `translateY(${containerHeight - sidebarHeight}px)`;
+                    console.log(`Moving sidebar to bottom of container`);
+                }
+            } else {
+                sidebar.style.transform = `translateY(0px)`;
+                console.log("No questions, moving sidebar to top");
+            }
         }
 
         $(document).ready(function() {
-            $('#edit-form').on('submit', function(e) {
-                e.preventDefault();
-                const formId = '{{ $form->id }}';
-                $.ajax({
-                    url: '/forms/' + formId,
-                    type: 'PUT',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        console.log('Form updated successfully.');
-                        window.location.href = '/forms/' + formId;
-                    },
-                    error: function(xhr) {
-                        console.error('Error updating form:', xhr.responseText);
-                        alert('Form Updated!');
-                        window.location.href = '/forms';
-                    }
-                });
+            $('#profileMenuButton').on('click', function() {
+                $('#profileMenu').toggleClass('hidden');
             });
+
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('#profileMenuButton').length && !$(e.target).closest(
+                        '#profileMenu').length) {
+                    $('#profileMenu').addClass('hidden');
+                }
+            });
+
+            updateAddButtonPosition();
         });
     </script>
 </body>
