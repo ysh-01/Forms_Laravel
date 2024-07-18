@@ -103,11 +103,26 @@ public function viewResponses(Form $form)
 {
     Log::info($request->all()); // Log the entire request data for debugging
 
+    // Fetch all questions for the form
+    $questions = $form->questions;
+
+    // Extract IDs of required questions
+    $requiredQuestionIds = $questions->where('required', true)->pluck('id')->toArray();
+
     // Validate and process form submission
     $validatedData = $request->validate([
         'answers' => 'required|array',
-        'answers.*' => 'required',
+        'answers.*' => 'required', // Ensure all answers are provided
     ]);
+
+    // Ensure all required questions are answered
+    foreach ($requiredQuestionIds as $requiredQuestionId) {
+        if (!array_key_exists($requiredQuestionId, $validatedData['answers'])) {
+            return redirect()->back()
+                             ->withErrors(['errors' => 'Please answer all required questions.'])
+                             ->withInput();
+        }
+    }
 
     Log::info($validatedData); // Log the validated data for debugging
 
@@ -129,4 +144,9 @@ public function viewResponses(Form $form)
     return redirect()->route('responses.showForm', $form)
                      ->with('success', 'Response submitted successfully.');
 }
+
+
+
+
+
 }

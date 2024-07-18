@@ -74,9 +74,11 @@
                             <th
                                 class="py-4 px-6 border-b border-gray-200 text-left text-sm font-semibold text-gray-600">
                                 Responses</th>
-                            <th
-                                class="py-4 px-6 border-b border-gray-200 text-left text-sm font-semibold text-gray-600">
-                                Actions</th>
+                            <th class="py-4 px-6 border-b border-gray-200 text-left text-sm font-semibold text-gray-600">
+                                Status</th>
+                                <th></th>
+                            <th>
+                                </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -93,11 +95,20 @@
                                     <a href="{{ route('responses.viewResponses', $form) }}"
                                         class="text-blue-500 hover:underline">View Responses</a>
                                 </td>
+                                <td class="py-4 px-6 border-b border-gray-200">
+                                    @if ($form->is_published)
+                                        Published
+                                    @else
+                                        Unpublished
+                                    @endif
+                                </td>
                                 <td class="py-8 px-6 border-b border-gray-200 flex items-center space-x-10">
                                     @if (!$form->is_published)
                                         <a href="{{ route('forms.edit', $form) }}"
                                             class="text-green-500 hover:underline">Edit</a>
                                     @endif
+                                </td>
+                                <td>
                                     <form action="{{ route('forms.destroy', $form) }}" method="POST"
                                         class="inline-block">
                                         @csrf

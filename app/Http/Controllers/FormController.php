@@ -25,6 +25,15 @@ class FormController extends Controller
         return view('forms.create');
     }
 
+    public function togglePublish(Form $form)
+    {
+        $form->is_published = !$form->is_published;
+        $form->save();
+
+        return redirect()->route('forms.show', $form->id)->with('success', 'Form publish status updated.');
+    }
+
+
     public function edit(Form $form)
     {
         // Questions are already fetched with their options cast to array due to the casts property
@@ -40,20 +49,22 @@ class FormController extends Controller
 
 
     public function store(Request $request)
-    {
+{
+    try {
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'questions' => 'required|array',
-            'questions.*.type' => 'required|string|in:multiple_choice,checkbox,dropdown,short_answer,long_answer',
-            'questions.*.text' => 'required|string', // This should match the key used in the JavaScript
+            'questions.*.type' => 'required|string|in:multiple_choice,checkbox,dropdown,text',
+            'questions.*.text' => 'required|string',
             'questions.*.options' => 'nullable|array',
+            'questions.*.required' => 'nullable|boolean',
         ]);
 
         $form = new Form();
         $form->title = $validatedData['title'];
         $form->description = $validatedData['description'];
-        $form->is_published = $request->input('is_published', false); // Default to false if not provided
+        $form->is_published = $request->input('is_published', false);
         $form->user_id = Auth::id();
         $form->save();
 
@@ -61,15 +72,18 @@ class FormController extends Controller
             $question = new Question();
             $question->form_id = $form->id;
             $question->type = $questionData['type'];
-            $question->question_text = $questionData['text']; // Ensure this matches the key in the validated data
+            $question->question_text = $questionData['text'];
             $question->options = isset($questionData['options']) ? json_encode($questionData['options']) : null;
-
+            $question->required = isset($questionData['required']) ? $questionData['required'] : false;
             $question->save();
         }
-        Session::flash('success', 'Form created successfully!');
-        return response()->json(['success' => true, 'form_id' => $form->id]);
-    }
 
+        return response()->json(['success' => true, 'form_id' => $form->id]);
+    } catch (\Exception $e) {
+        Log::error('Error saving form: ' . $e->getMessage(), ['exception' => $e]);
+        return response()->json(['success' => false, 'message' => 'Error saving form'], 500);
+    }
+}
 
     public function show(Form $form)
     {
@@ -99,7 +113,7 @@ class FormController extends Controller
             'description' => 'nullable|string|max:255',
             'questions' => 'required|array',
             'questions.*.id' => 'nullable|exists:questions,id',
-            'questions.*.type' => 'required|string|in:multiple_choice,checkbox,dropdown,short_answer,long_answer',
+            'questions.*.type' => 'required|string|in:multiple_choice,checkbox,dropdown,text',
             'questions.*.text' => 'required|string|max:255',
             'questions.*.options' => 'nullable|array',
             'questions.*.options.*' => 'nullable|string|max:255',
@@ -138,6 +152,8 @@ class FormController extends Controller
 
         return redirect()->route('forms.show', $form)->with('success', 'Form updated successfully.');
     }
+
+
 
 
 

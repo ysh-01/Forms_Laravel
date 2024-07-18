@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('form_id')->constrained()->onDelete('cascade');
-            $table->enum('type', ['multiple_choice', 'checkbox', 'dropdown', 'short_answer', 'long_answer']);
+            $table->enum('type', ['multiple_choice', 'checkbox', 'dropdown', 'text']);
             $table->text('question_text');
+            $table->boolean('required')->default(false);
             $table->json('options')->nullable(); // Store options as JSON if applicable
             $table->timestamps();
         });

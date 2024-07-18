@@ -22,7 +22,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/forms/{form}', [FormController::class, 'update'])->name('forms.update');
     Route::delete('/forms/{form}', [FormController::class, 'destroy'])->name('forms.destroy');
     Route::get('/forms/{form}/preview', [FormController::class, 'preview'])->name('forms.preview');
-
+    Route::patch('/forms/{form}/publish', [FormController::class, 'togglePublish'])->name('forms.publish');
 });
 
 // Response routes

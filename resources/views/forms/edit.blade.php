@@ -60,15 +60,11 @@
                 @foreach ($questions as $index => $question)
                     <div class="question mb-4 p-3 border rounded bg-light" data-index="{{ $index }}">
                         <div class="form-group">
-                            <select class="form-control question-type" id="question-type-{{ $index }}"
-                                name="questions[{{ $index }}][type]">
-                                <option value="multiple_choice"
-                                    {{ $question->type === 'multiple_choice' ? 'selected' : '' }}>Multiple Choice
-                                </option>
-                                <option value="checkbox" {{ $question->type === 'checkbox' ? 'selected' : '' }}>
-                                    Checkbox</option>
-                                <option value="dropdown" {{ $question->type === 'dropdown' ? 'selected' : '' }}>
-                                    Dropdown</option>
+                            <select class="form-control question-type" id="question-type-{{ $index }}" name="questions[{{ $index }}][type]">
+                                <option value="multiple_choice" {{ $question->type === 'multiple_choice' ? 'selected' : '' }}>Multiple Choice</option>
+                                <option value="checkbox" {{ $question->type === 'checkbox' ? 'selected' : '' }}>Checkbox</option>
+                                <option value="dropdown" {{ $question->type === 'dropdown' ? 'selected' : '' }}>Dropdown</option>
+                                <option value="text" {{ $question->type === 'text' ? 'selected' : '' }}>Text</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -76,24 +72,25 @@
                                 name="questions[{{ $index }}][text]" class="form-control question-input"
                                 value="{{ $question->question_text }}" required>
                         </div>
-                        <div class="form-group options-container">
+                        <div class="form-group form-check">
+                            <input type="checkbox" id="question-required-{{ $index }}"
+                                name="questions[{{ $index }}][required]" class="form-check-input"
+                                {{ $question->required ? 'checked' : '' }}>
+                            <label for="question-required-{{ $index }}" class="form-check-label">Required</label>
+                        </div>
+                        <div class="form-group options-container" style="{{ $question->type === 'text' ? 'display:none;' : '' }}">
                             <label>Options</label>
                             @if (is_array($question->options))
                                 @foreach ($question->options as $optionIndex => $option)
                                     <div class="option d-flex align-items-center mb-2">
-                                        <input type="text"
-                                            name="questions[{{ $index }}][options][{{ $optionIndex }}]"
-                                            class="form-control option-input" value="{{ $option }}">
-                                        <span class="delete-option ml-2 text-danger" onclick="deleteOption(this)"
-                                            style="cursor: pointer;">&#10005;</span>
+                                        <input type="text" name="questions[{{ $index }}][options][{{ $optionIndex }}]" class="form-control option-input" value="{{ $option }}">
+                                        <span class="delete-option ml-2 text-danger" onclick="deleteOption(this)" style="cursor: pointer;">&#10005;</span>
                                     </div>
                                 @endforeach
                             @endif
-                            <button type="button" class="btn btn-secondary" onclick="addOption(this)">Add
-                                Option</button>
+                            <button type="button" class="btn btn-secondary" onclick="addOption(this)">Add Option</button>
                             <button class="btn btn-md" id="moveUpButton" onclick="deleteQuestion(this);">
-                                <img src="{{ asset('images/bin.png') }}" alt="" width="20px"
-                                    height="20px" />
+                                <img src="{{ asset('images/bin.png') }}" alt="" width="20px" height="20px" />
                             </button>
                         </div>
                     </div>
@@ -106,7 +103,6 @@
                     </div>
                 </div>
             </div>
-            <button type="button" class="btn btn-primary mb-4" onclick="addNewQuestion()">Add New Question</button>
             <button type="submit" class="btn btn-success mb-4">Save</button>
         </form>
     </div>
@@ -142,22 +138,29 @@
             const questionHtml = `
                 <div class="question mb-4 p-3 border rounded bg-light" data-index="${questionIndex}">
                     <div class="form-group">
-                        <select class="form-control question-type" id="question-type-${questionIndex}" name="questions[${questionIndex}][type]">
+                        <select class="form-control question-type" id="question-type-${questionIndex}" name="questions[${questionIndex}][type]" onchange="handleQuestionTypeChange(this)">
                             <option value="multiple_choice">Multiple Choice</option>
                             <option value="checkbox">Checkbox</option>
                             <option value="dropdown">Dropdown</option>
+                            <option value="text">Text</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <input type="text" id="question-text-${questionIndex}" name="questions[${questionIndex}][text]" class="form-control question-input" placeholder="Type your question here" required>
                     </div>
+                    <div class="form-group form-check">
+                        <input type="checkbox" id="question-required-{{ $index }}"
+                            name="questions[{{ $index }}][required]" class="form-check-input"
+                            {{ $question->required ? 'checked' : '' }}>
+                        <label for="question-required-{{ $index }}" class="form-check-label">Required</label>
+                    </div>
                     <div class="form-group options-container">
                         <label>Options</label>
                         <button type="button" class="btn btn-secondary" onclick="addOption(this)">Add Option</button>
+                        <button class="btn btn-md" id="moveUpButton" onclick="deleteQuestion(this);">
+                            <img src="{{ asset('images/bin.png') }}" alt="" width="20px" height="20px" />
+                        </button>
                     </div>
-                    <button class="btn btn-md" id="moveUpButton" onclick="deleteQuestion(this);">
-                                <img src="{{ asset('images/bin.png') }}" alt="" width="20px" height="20px" />
-                    </button>
                 </div>
             `;
 
@@ -167,7 +170,33 @@
 
         function deleteQuestion(button) {
             $(button).closest('.question').remove();
+            updateQuestionIndices();
             updateAddButtonPosition();
+        }
+
+        function updateQuestionIndices() {
+            $('#questions-section .question').each((index, element) => {
+                $(element).attr('data-index', index);
+                $(element).find('.question-type').attr('name', `questions[${index}][type]`);
+                $(element).find('.question-input').attr('name', `questions[${index}][text]`);
+                $(element).find('.question-input').attr('id', `question-text-${index}`);
+                $(element).find('.form-check-input').attr('name', `questions[${index}][required]`);
+                $(element).find('.form-check-input').attr('id', `question-required-${index}`);
+                $(element).find('.options-container').find('.option-input').each((optionIndex, optionElement) => {
+                    $(optionElement).attr('name', `questions[${index}][options][${optionIndex}]`);
+                });
+            });
+        }
+
+        function handleQuestionTypeChange(selectElement) {
+            const selectedType = $(selectElement).val();
+            const optionsContainer = $(selectElement).closest('.question').find('.options-container');
+
+            if (selectedType === 'text') {
+                optionsContainer.hide();
+            } else {
+                optionsContainer.show();
+            }
         }
 
         function updateAddButtonPosition() {
@@ -194,16 +223,19 @@
             }
         }
 
-        $(document).ready(function() {
-            $('#profileMenuButton').on('click', function() {
+        $(document).ready(function () {
+            $('#profileMenuButton').click(function () {
                 $('#profileMenu').toggleClass('hidden');
             });
 
-            $(document).on('click', function(e) {
-                if (!$(e.target).closest('#profileMenuButton').length && !$(e.target).closest(
-                        '#profileMenu').length) {
+            $(document).click(function (event) {
+                if (!$(event.target).closest('#profileMenuButton, #profileMenu').length) {
                     $('#profileMenu').addClass('hidden');
                 }
+            });
+
+            $('.question-type').each((index, element) => {
+                handleQuestionTypeChange(element);
             });
 
             updateAddButtonPosition();
@@ -212,3 +244,11 @@
 </body>
 
 </html>
+
+
+
+
+
+
+
+
