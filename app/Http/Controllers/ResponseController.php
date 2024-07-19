@@ -85,7 +85,7 @@ public function viewResponses(Form $form)
         }
     }
 
-    return view('responses.viewResponses', compact('form', 'responses', 'statistics'));
+    return view('responses.viewResponses', compact('form', 'responses', 'statistics', 'questions'));
 }
 
 

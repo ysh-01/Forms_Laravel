@@ -10,14 +10,23 @@ use App\Models\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Validation\Rules\Unique;
 
 class FormController extends Controller
 {
     public function index()
     {
-        // Get forms belonging to the authenticated user
+        $totalForms = Form::count();
+        $publishedForms = Form::where('is_published', true)->count();
+        $totalResponses = Response::count();
+
         $forms = Form::where('user_id', Auth::id())->get();
-        return view('forms.index', compact('forms'));
+        return view('forms.index', [
+            'forms' => $forms,
+            'totalForms' => $totalForms,
+            'publishedForms' => $publishedForms,
+            'totalResponses' => $totalResponses,
+        ]);
     }
 
     public function create()
@@ -36,13 +45,11 @@ class FormController extends Controller
 
     public function edit(Form $form)
     {
-        // Questions are already fetched with their options cast to array due to the casts property
         $questions = $form->questions;
         foreach ($questions as $question) {
             $question->options = json_decode($question->options, true);
         }
 
-        // Pass the questions to the view
         return view('forms.edit', compact('form', 'questions'));
     }
 
@@ -61,6 +68,7 @@ class FormController extends Controller
             'questions.*.required' => 'nullable|boolean',
         ]);
 
+
         $form = new Form();
         $form->title = $validatedData['title'];
         $form->description = $validatedData['description'];
@@ -77,6 +85,8 @@ class FormController extends Controller
             $question->required = isset($questionData['required']) ? $questionData['required'] : false;
             $question->save();
         }
+
+
 
         return response()->json(['success' => true, 'form_id' => $form->id]);
     } catch (\Exception $e) {
@@ -145,7 +155,6 @@ class FormController extends Controller
             $existingQuestionIds[] = $question->id;
         }
 
-        // Delete questions that were removed
         $form->questions()->whereNotIn('id', $existingQuestionIds)->delete();
 
         Log::info('Remaining questions: ', $form->questions()->get()->toArray());

@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forms</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
         .dropdown:hover .dropdown-menu {
             display: block;
@@ -17,7 +19,7 @@
     </style>
 </head>
 
-<body style="bg-gray-100">
+<body class="bg-gray-100">
     <nav class="bg-white p-4 shadow-lg">
         <div class="container mx-auto flex justify-between items-center">
             <a href="{{ url('/') }}" style="color: rgb(103,58,183)"
@@ -49,16 +51,31 @@
             <span class="block sm:inline">{{ session('delete') }}</span>
         </div>
     @endif
-    <div class="container mx-auto mt-10">
-        <div class="flex justify-between mb-6 items-center">
+    <div class="container mx-auto mt-10 ">
+        <div class="flex justify-between mb-6 items-center grid grid-cols-4 gap-20">
             <a href="{{ route('forms.create') }}"
                 class="inline-block px-6 py-3 text-white font-semibold rounded-md shadow bg-purple-700 hover:bg-purple-900 transition duration-200">Start
                 a new form</a>
 
+            <a style="color: rgb(103,58,183)" class="block max-w-md p-5 bg-white border border-gray-200 rounded-lg shadow">
+
+                <h5 class="mb-2 text-gray-800 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Total Forms Created</h5>
+                <p class="font-normal text-gray-700 dark:text-gray-400">{{ $totalForms }}</p>
+            </a>
+            <a class="block max-w-md p-5 bg-white border border-gray-200 rounded-lg shadow">
+
+                <h5 class="mb-2 text-gray-800 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Total Forms Published</h5>
+                <p class="font-normal text-gray-700 dark:text-gray-400">{{ $publishedForms }}</p>
+            </a>
+            <a class="block max-w-md p-5 bg-white border border-gray-200 rounded-lg shadow">
+
+                <h5 class="mb-2 text-gray-800 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Total Responses Received</h5>
+                <p class="font-normal text-gray-700 dark:text-gray-400">{{ $totalResponses }}</p>
+            </a>
         </div>
-        <h2 class="text-3xl font-semibold text-gray-800 font-sans">Recent Forms</h2>
+        <h2 class="text-3xl font-semibold text-gray-800 font-sans">Created Forms</h2>
         <br>
-        <div class="bg-white shadow-custom rounded-lg p-6">
+        <div class="shadow-custom rounded-lg p-6 bg-gray-100">
             @if ($forms->isEmpty())
                 <p class="text-gray-600 text-center">No forms available.</p>
             @else
@@ -76,8 +93,8 @@
                                 Responses</th>
                             <th class="py-4 px-6 border-b border-gray-200 text-left text-sm font-semibold text-gray-600">
                                 Status</th>
-                                <th></th>
-                            <th>
+                                <th class="py-4 px-6 border-b border-gray-200 text-left text-sm font-semibold text-gray-600"></th>
+                            <th class="py-4 px-6 border-b border-gray-200 text-left text-sm font-semibold text-gray-600">
                                 </th>
                         </tr>
                     </thead>
@@ -104,9 +121,11 @@
                                 </td>
                                 <td class="py-8 px-6 border-b border-gray-200 flex items-center space-x-10">
                                     @if (!$form->is_published)
-                                        <a href="{{ route('forms.edit', $form) }}"
-                                            class="text-green-500 hover:underline">Edit</a>
+                                        <a href="{{ route('forms.edit', $form) }}" class="text-green-500 hover:underline">Edit</a>
+                                    @else
+                                        <a href="#" class="text-gray-500" id="formd" onclick="handle()">Edit</a>
                                     @endif
+
                                 </td>
                                 <td>
                                     <form action="{{ route('forms.destroy', $form) }}" method="POST"
@@ -125,9 +144,13 @@
     </div>
 
     <script>
-        document.getElementById('profileMenuButton').addEventListener('click', function() {
-            document.getElementById('profileMenu').classList.toggle('hidden');
+        function handle() {
+        Swal.fire({
+            title: 'You cannot edit a published form',
+            icon: 'info',
+            confirmButtonText: 'OK'
         });
+    }
         setTimeout(function() {
             var successMessage = document.getElementById('successMessage');
             if (successMessage) {
@@ -135,6 +158,8 @@
             }
         }, 3000);
     </script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js" ></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 </body>
-
 </html>

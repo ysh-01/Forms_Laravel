@@ -13,29 +13,29 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
 </head>
-<body>
-    <nav class="bg-white p-4 shadow-sm">
+<body class="bg-gray-100">
+    <nav class="bg-white p-2 shadow-gray-lg">
         <div class="mx-auto flex justify-between items-center">
             <a href="{{ url('/') }}" style="color: rgb(103,58,183)"
                 class="text-3xl font-bold font-sans">LaraForms</a>
+
             <div class="relative dropdown">
-                <button id="profileMenuButton" class="flex items-center focus:outline-none">
-                    <img src="{{ asset('images/user.png') }}" alt="Profile"
-                        class="w-10 h-10 rounded-full border-2 border-white">
-                </button>
-                <div id="profileMenu"
-                    class="dropdown-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2">
-                    <form method="POST" action="{{ route('logout') }}">
+                <div class="btnsub text-center mt-4">
+                    <form action="{{ route('forms.publish', $form->id) }}" method="POST">
                         @csrf
-                        <button type="submit" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 w-full text-left">
-                            Logout
-                        </button>
+                        @method('PATCH')
+                        <span><button type="submit" name="publish" value="publish" class="btnsave btn btn-secondary">
+                            {{ $form->is_published ? 'Unpublish' : 'Publish' }}
+                        </button></span>
                     </form>
+                    &nbsp;
+                    &nbsp;
+                    <div><button type="submit" name="publish" value="publish" class="btnsave btn btn-secondary">Edit</button></div>
                 </div>
             </div>
         </div>
     </nav>
-    <div class="question_form bg-light p-4 rounded shadow-sm">
+    <div class="question_form bg-gray-100 p-4 rounded shadow-sm">
         <div class="section">
             <div class="question_title_section mb-4">
                 <div class="question_form_top">
@@ -46,7 +46,7 @@
         </div>
         <div class="section" id="questions_section">
             @foreach ($form->questions as $index => $question)
-                <div class="question mb-4 p-3 border rounded bg-white">
+                <div class="question mb-4 p-4 border rounded bg-white">
                     <select class="form-control question_type mb-3" name="questions[{{ $index }}][type]" onchange="changeQuestionType(this)" disabled>
                         <option value="multiple_choice" {{ $question->type === 'multiple_choice' ? 'selected' : '' }}>Multiple Choice</option>
                         <option value="checkbox" {{ $question->type === 'checkbox' ? 'selected' : '' }}>Checkbox</option>

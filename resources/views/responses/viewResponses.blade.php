@@ -11,19 +11,30 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-<body style="background-color: rgb(253, 251, 251)" class="font-roboto text-gray-800">
+<body class="font-roboto text-gray-800 bg-white">
 
     <!-- Header -->
     <div class="bg-white shadow-md px-6 py-4 flex justify-between items-center">
         <div class="flex items-center">
             <h1 class="text-2xl font-semibold text-purple-900">{{ $form->title }} - Responses</h1>
         </div>
-        <div class="flex items-center">
-            <img src="{{ asset('images/menu.png') }}" alt="Menu" class="h-8 w-8 mr-4">
-            <img src="{{ asset('images/user.png') }}" alt="User" class="h-8 w-8">
+        <div class="relative dropdown">
+            <button id="profileMenuButton" class="flex items-center focus:outline-none">
+                <img src="{{ asset('images/user.png') }}" alt="Profile"
+                    class="w-10 h-10 rounded-full border-2 border-white">
+            </button>
+            <div id="profileMenu"
+                class="dropdown-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2">
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="block px-4 py-2 text-gray-700 hover:bg-gray-200 w-full text-left">
+                        Logout
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
-    <div class="text-sm font-medium text-center text-purple-700 border-b border-black-700 dark:text-gray-400 dark:border-gray-700 hover: border-b-2">
+    {{-- <div class="text-sm font-medium text-center text-purple-700 border-b border-black-700 dark:text-gray-400 dark:border-gray-700 hover: border-b-2">
         <ul class="flex flex-wrap -mb-px">
             <li class="mr-2">
                 <a href="javascript:void(0);" onclick="showTab('responses_tab')" class="tab-link text-black-600 font-bold inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-purple-700 ">Responses</a>
@@ -32,7 +43,7 @@
                 <a href="javascript:void(0);" onclick="showTab('statistics_tab')" class="tab-link text-black-600 font-bold inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-purple-700 ">Statistics</a>
             </li>
         </ul>
-    </div>
+    </div> --}}
 
     <!-- Main Content -->
     <div class="mx-auto max-w-7xl px-6 py-8">
@@ -42,7 +53,7 @@
 
             <!-- Share Link -->
             <div class="flex items-center mb-6">
-                <h2 class="text-xl font-semibold mr-4">Responses</h2>
+
                 <div class="flex items-center">
                     <input type="text" value="{{ route('responses.showForm', $form) }}" id="shareLink"
                         class="bg-white border border-gray-300 px-3 py-1 rounded-l sm:w-auto focus:outline-none"
@@ -59,7 +70,9 @@
                     </div>
                 </div>
             </div>
-
+            <br>
+            <h2 class="text-xl font-semibold mr-4">Responses</h2>
+            <br>
             <!-- Responses Table -->
             @if ($responses->isEmpty())
             <p class="text-gray-600">No responses available.</p>
@@ -100,7 +113,7 @@
         </div>
 
         <!-- Statistics Tab -->
-        <div id="statistics_tab" class="tab-content hidden w-3/6">
+        {{-- <div id="statistics_tab" class="tab-content hidden w-3/6">
             <h2 class="text-xl font-semibold mb-6">Statistics</h2>
 
             @foreach ($statistics as $questionId => $stat)
@@ -109,7 +122,7 @@
                 <canvas id="chart-{{ $questionId }}"></canvas>
             </div>
             @endforeach
-        </div>
+        </div> --}}
     </div>
 
     <!-- Script for Copy Link Functionality -->
@@ -140,7 +153,6 @@
             document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add('border-purple-600', 'text-purple-600');
         }
 
-        // Generate Charts
         document.addEventListener('DOMContentLoaded', function () {
             const statistics = @json($statistics);
             console.log(statistics); // Log statistics for debugging
@@ -178,28 +190,61 @@
                     backgroundColors = labels.map((_, index) => `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.5)`);
                 }
 
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Responses',
-                            data: data,
-                            backgroundColor: backgroundColors,
-                            borderColor: backgroundColors.map(color => color.replace('0.5', '1')),
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
+                if (stat.type === 'multiple_choice' || stat.type === 'dropdown') {
+                    new Chart(ctx, {
+                        type: 'pie',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Responses',
+                                data: data,
+                                backgroundColor: backgroundColors,
+                                borderColor: backgroundColors.map(color => color.replace('0.5', '1')),
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
                                 beginAtZero: true
+                                }
+                            }
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                },
+                                tooltip: {
+                                    enabled: true
+                                }
                             }
                         }
-                    }
-                });
+                    });
+                } else if (stat.type === 'checkbox') {
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Responses',
+                                data: data,
+                                backgroundColor: backgroundColors,
+                                borderColor: backgroundColors.map(color => color.replace('0.5', '1')),
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                }
             });
         });
+
     </script>
 
     <!-- Custom Scripts -->

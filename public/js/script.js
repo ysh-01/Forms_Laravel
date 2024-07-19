@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function addNewQuestion() {
         const newQuestionDiv = document.createElement("div");
-        newQuestionDiv.className = "question";
+        // newQuestionDiv.className = "question";
         newQuestionDiv.innerHTML = `
            <div class="question mb-4 p-4 border rounded bg-white">
                 <select class="form-control question_type mb-1" onchange="changeQuestionType(this)">
@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 </select>
                 <input type="text" name="question" class="form-control question-input mb-3" placeholder="Type your question here" />
                 <div class="options-container mb-3">
-                    <!-- Options or text input will be dynamically added here -->
+
                 </div>
                 <button class="btn btn-secondary add-option-btn" onclick="addOption(this)">
                     Add Option
@@ -119,6 +119,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const questions = document.querySelectorAll(".question");
         let formData = [];
 
+        console.log(questions);
+
         questions.forEach((question) => {
             const questionType = question.querySelector("select").value;
             const questionText = question.querySelector(".question-input").value;
@@ -130,6 +132,13 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             formData.push({
+                type: questionType,
+                text: questionText,
+                options: options,
+                required: isRequired
+            });
+
+            console.log({
                 type: questionType,
                 text: questionText,
                 options: options,
@@ -151,6 +160,8 @@ document.addEventListener("DOMContentLoaded", function () {
             description: formDescription,
             questions: formData
         };
+
+        console.log(data);
 
 
         fetch("/forms", {
@@ -195,6 +206,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
+
+
     window.addNewQuestion = addNewQuestion;
     window.deleteQuestion = deleteQuestion;
     window.addOption = addOption;
@@ -202,34 +215,7 @@ document.addEventListener("DOMContentLoaded", function () {
     window.changeQuestionType = changeQuestionType;
     window.saveForm = saveForm;
 
-    window.previewForm = function (formId) {
-        const formTitle = document.getElementById("form-title").value;
-        const formDescription = document.getElementById("form-description").value;
-        const questions = document.querySelectorAll(".question");
-        let formData = [];
-
-        questions.forEach((question) => {
-            const questionType = question.querySelector("select").value;
-            const questionText = question.querySelector(".question-input").value;
-            const options = Array.from(question.querySelectorAll(".option-input")).map((input) => input.value);
-            formData.push({
-                type: questionType,
-                text: questionText,
-                options: options,
-            });
-        });
-
-        const formParams = new URLSearchParams({
-            title: formTitle,
-            description: formDescription,
-            data: JSON.stringify(formData),
-        });
-
-        window.location.href = '/forms/' + formId + '/preview';
-    };
-
-    // Assuming there's a button with id "add-question-button"
-    document.getElementById("add-question-button").addEventListener("click", addNewQuestion);
+    // document.getElementById("add-question-button").addEventListener("click", addNewQuestion);
 
     document.getElementById("questions_section").addEventListener("DOMNodeInserted", updateAddButtonPosition);
     document.getElementById("questions_section").addEventListener("DOMNodeRemoved", updateAddButtonPosition);
