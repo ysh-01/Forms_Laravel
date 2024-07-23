@@ -23,6 +23,8 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/forms/{form}', [FormController::class, 'destroy'])->name('forms.destroy');
     Route::get('/forms/{form}/preview', [FormController::class, 'preview'])->name('forms.preview');
     Route::patch('/forms/{form}/publish', [FormController::class, 'togglePublish'])->name('forms.publish');
+    Route::get('/forms/template/{template}', [FormController::class, 'createWithTemplate'])->name('forms.template');
+
 });
 
 // Response routes
@@ -30,5 +32,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/forms/respond/{form}', [ResponseController::class, 'showForm'])->name('responses.showForm');
     Route::post('/forms/respond/{form}', [ResponseController::class, 'submitForm'])->name('responses.submitForm');
     Route::get('/forms/{form}/responses', [ResponseController::class, 'viewResponses'])->name('responses.viewResponses');
+    Route::get('/forms/{form}/success', [ResponseController::class, 'showSuccess'])->name('responses.success');
     Route::get('/forms/{form}/responses/{responseId}', [ResponseController::class, 'viewResponse'])->name('responses.viewResponse');
 });

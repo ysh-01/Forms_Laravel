@@ -21,6 +21,12 @@ class ResponseController extends Controller
         return view('responses.index', compact('form', 'responses'));
     }
 
+    public function showSuccess(Form $form)
+{
+    return view('responses.success', compact('form'));
+}
+
+
     // Display a specific response
     public function viewResponse(Form $form, $responseId)
 {

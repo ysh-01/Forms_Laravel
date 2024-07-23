@@ -30,7 +30,7 @@
                     </form>
                     &nbsp;
                     &nbsp;
-                    <div><button type="submit" name="publish" value="publish" class="btnsave btn btn-secondary">Edit</button></div>
+                    <div><button type="submit" name="publish" value="publish" class="btnsave btn btn-secondary"><a href="/forms/{{$form->id}}/edit">Edit</a></button></div>
                 </div>
             </div>
         </div>

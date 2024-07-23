@@ -11,6 +11,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
         rel="stylesheet">
     <style>
@@ -110,6 +112,49 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
+
+
+$(document).ready(function () {
+        $('#edit-form').on('submit', function (e) {
+            e.preventDefault(); // Prevent the default form submission
+
+            // Get the form action and data
+            var form = $(this);
+            var url = form.attr('action');
+            var formData = form.serialize();
+
+            // Send an AJAX request to submit the form data
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: formData,
+                success: function (response) {
+                    // Show SweetAlert on success
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Form edited successfully.',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Redirect to the show page
+                            window.location.href = "{{ route('forms.show', $form) }}";
+                        }
+                    });
+                },
+                error: function (xhr, status, error) {
+                    // Handle any errors
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'An error occurred while editing the form. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        });
+    });
+
         function addOption(button) {
             const optionsContainer = $(button).closest('.options-container');
             const optionIndex = optionsContainer.find('.option').length;

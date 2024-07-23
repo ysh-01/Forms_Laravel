@@ -20,7 +20,7 @@ class FormController extends Controller
         $publishedForms = Form::where('is_published', true)->count();
         $totalResponses = Response::count();
 
-        $forms = Form::where('user_id', Auth::id())->get();
+        $forms = Form::where('user_id', Auth::id())->orderBy('created_at', 'desc')->get();
         return view('forms.index', [
             'forms' => $forms,
             'totalForms' => $totalForms,
@@ -52,6 +52,55 @@ class FormController extends Controller
 
         return view('forms.edit', compact('form', 'questions'));
     }
+
+
+    public function createWithTemplate($template)
+{
+    $data = [];
+
+    switch ($template) {
+        case 'contact':
+            $data = [
+                'title' => 'Contact Information',
+                'description' => 'Template for collecting contact information.',
+                'questions' => [
+                    ['type' => 'text', 'question_text' => 'Name'],
+                    ['type' => 'text', 'question_text' => 'Email'],
+                    // Add more questions as needed
+                ],
+            ];
+            break;
+
+        case 'rsvp':
+            $data = [
+                'title' => 'RSVP',
+                'description' => 'Event Address: 123 Your Street Your City, ST 12345
+Contact us at (123) 456-7890 or no_reply@example.com
+',
+                'questions' => [
+                    ['type' => 'text', 'question_text' => 'Can you attend?'],
+                    ['type' => 'text', 'question_text' => 'Number of Guests'],
+                    // Add more questions as needed
+                ],
+            ];
+            break;
+
+        case 'party':
+            $data = [
+                'title' => 'Party Invite',
+                'description' => 'Template for party invitations.',
+                'questions' => [
+                    ['type' => 'text', 'question_text' => 'Name'],
+                    ['type' => 'text', 'question_text' => 'RSVP Status'],
+                    // Add more questions as needed
+                ],
+            ];
+            break;
+    }
+
+    return view('forms.create', ['data' => $data]);
+}
+
 
 
 

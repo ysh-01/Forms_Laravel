@@ -48,8 +48,8 @@
         <div class="section">
             <div class="question_title_section mb-4">
                 <div class="question_form_top">
-                    <input type="text" id="form-title" name="title" class="form-control form-control-lg p-2 mb-2" placeholder="Untitled Form" />
-                    <input type="text" name="description" id="form-description" class="form-control form-control-sm" placeholder="Form Description" />
+                    <input type="text" id="form-title" name="title" value="{{ $data['title'] ?? '' }}" class="form-control form-control-lg p-2 mb-2" placeholder="Untitled Form" />
+                    <input type="text" name="description" id="form-description" value="{{ $data['description'] ?? '' }}" class="form-control form-control-sm" placeholder="Form Description" />
                 </div>
             </div>
         </div>
