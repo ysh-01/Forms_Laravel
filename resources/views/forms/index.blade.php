@@ -9,10 +9,6 @@
     <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
-        .dropdown:hover .dropdown-menu {
-            display: block;
-        }
-
         .shadow-custom {
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
@@ -136,6 +132,11 @@
     </div>
 
     <script>
+        document.getElementById('profileMenuButton').addEventListener('click', function() {
+            var menu = document.getElementById('profileMenu');
+            menu.classList.toggle('hidden');
+        });
+
         function handle() {
             Swal.fire({
                 title: 'You cannot edit a published form',
