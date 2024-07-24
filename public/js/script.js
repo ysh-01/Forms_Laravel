@@ -55,15 +55,15 @@ document.addEventListener("DOMContentLoaded", function () {
         const newQuestionDiv = document.createElement("div");
         // newQuestionDiv.className = "question";
         newQuestionDiv.innerHTML = `
-           <div class="question mb-4 p-4 border rounded bg-white">
+           <div class="question mb-4 p-4 border rounded bg-white shadow-sm">
                 <select class="form-control question_type mb-1" onchange="changeQuestionType(this)">
-                    <option value="">Select Question Type</option>
+                    <option style="border:1px solid rgb(103,58,183);" value="">Select Question Type</option>
                     <option value="multiple_choice">Multiple Choice</option>
                     <option value="checkbox">Checkbox</option>
                     <option value="dropdown">Dropdown</option>
                     <option value="text">Text</option>
                 </select>
-                <input type="text" name="question" class="form-control question-input mb-3" placeholder="Type your question here" />
+                <input style="border:none; border-bottom: 2px solid rgb(103,58,183); border-radius:0" type="text" name="question" class="form-control question-input mb-3" placeholder="Type your question here" />
                 <div class="options-container mb-3">
 
                 </div>

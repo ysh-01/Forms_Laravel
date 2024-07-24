@@ -39,26 +39,26 @@
         <div class="section">
             <div class="question_title_section mb-4">
                 <div class="question_form_top">
-                    <input type="text" id="form-title" name="title" class="form-control form-control-lg mb-2" style="color: black" placeholder="Untitled Form" value="{{ $form->title }}" readonly />
-                    <input type="text" name="description" id="form-description" class="form-control form-control-sm" style="color: black" placeholder="Form Description" value="{{ $form->description }}" readonly />
+                    <input style="background-color: white; border:none; border-bottom: 2px solid rgb(103,58,183); border-radius:0;" type="text" id="form-title" name="title" class="form-control form-control-lg mb-2" style="color: black" placeholder="Untitled Form" value="{{ $form->title }}" readonly />
+                    <input style="background-color: white; border:none; border-bottom: 2px solid rgb(103,58,183); border-radius:0;" type="text" name="description" id="form-description" class="form-control form-control-sm" style="color: black" placeholder="Form Description" value="{{ $form->description }}" readonly />
                 </div>
             </div>
         </div>
-        <div class="section" id="questions_section">
+        <div class="section shadow-sm" id="questions_section">
             @foreach ($form->questions as $index => $question)
-                <div class="question mb-4 p-4 border rounded bg-white">
-                    <select class="form-control question_type mb-3" name="questions[{{ $index }}][type]" onchange="changeQuestionType(this)" disabled>
+                <div class="question mb-4 p-4 border rounded bg-white shadow-sm">
+                    <select style="background-color: white; color:bLack;" class="form-control question_type mb-3" name="questions[{{ $index }}][type]" onchange="changeQuestionType(this)" disabled>
                         <option value="multiple_choice" {{ $question->type === 'multiple_choice' ? 'selected' : '' }}>Multiple Choice</option>
                         <option value="checkbox" {{ $question->type === 'checkbox' ? 'selected' : '' }}>Checkbox</option>
                         <option value="dropdown" {{ $question->type === 'dropdown' ? 'selected' : '' }}>Dropdown</option>
                         <option value="text" {{ $question->type === 'text' ? 'selected' : '' }}>Text</option>
                     </select>
-                    <input type="text" name="questions[{{ $index }}][text]" class="form-control question-input mb-3" placeholder="Type your question here" value="{{ $question->question_text }}" readonly />
+                    <input style="background-color: white; color:bLack;" type="text" name="questions[{{ $index }}][text]" class="form-control question-input mb-3" placeholder="Type your question here" value="{{ $question->question_text }}" readonly />
                     @if ($question->options)
                         <div class="options-container mb-3">
                             @foreach (json_decode($question->options) as $optionIndex => $option)
                                 <div class="option d-flex align-items-center mb-2">
-                                    <input type="text" name="questions[{{ $index }}][options][{{ $optionIndex }}]" class="form-control option-input" placeholder="Option" value="{{ $option }}" readonly />
+                                    <input style="background-color: white; color:bLack;" type="text" name="questions[{{ $index }}][options][{{ $optionIndex }}]" class="form-control option-input" placeholder="Option" value="{{ $option }}" readonly />
                                 </div>
                             @endforeach
                         </div>

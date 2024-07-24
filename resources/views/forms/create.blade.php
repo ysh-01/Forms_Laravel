@@ -48,21 +48,21 @@
         <div class="section">
             <div class="question_title_section mb-4">
                 <div style="border-bottom:5px; border-radius:5px;" class="question_form_top shadow-sm">
-                    <input type="text" id="form-title" name="title" value="{{ $data['title'] ?? '' }}" class="form-control form-control-lg p-2 mb-2" placeholder="Untitled Form" />
-                    <input type="text" name="description" id="form-description" value="{{ $data['description'] ?? '' }}" class="form-control form-control-sm" placeholder="Form Description" />
+                    <input style="border: none; border-bottom:2px solid rgb(103,58,183); border-radius:0" type="text" id="form-title" name="title" value="{{ $data['title'] ?? '' }}" class="form-control form-control-lg p-2 mb-2" placeholder="Untitled Form" />
+                    <input style="border: none; outline:none; border-bottom:2px solid rgb(103,58,183); border-radius:0" type="text" name="description" id="form-description" value="{{ $data['description'] ?? '' }}" class="form-control form-control-sm" placeholder="Form Description" />
                 </div>
             </div>
         </div>
         <div class="section" id="questions_section">
             <div class="question mb-4 p-4 border rounded bg-white shadow-sm">
                 <select class="form-control question_type mb-1" onchange="changeQuestionType(this)">
-                    <option value="">Select Question Type</option>
+                    <option style="border:1px solid rgb(103,58,183);" value="">Select Question Type</option>
                     <option value="multiple_choice">Multiple Choice</option>
                     <option value="checkbox">Checkbox</option>
                     <option value="dropdown">Dropdown</option>
                     <option value="text">Text</option>
                 </select>
-                <input type="text" name="question" class="form-control question-input mb-3" placeholder="Type your question here" />
+                <input style="border:none; border-bottom: 2px solid rgb(103,58,183); border-radius:0" type="text" name="question" class="form-control question-input mb-3" placeholder="Type your question here" />
                 <div class="options-container mb-3">
 
                 </div>

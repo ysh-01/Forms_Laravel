@@ -6,6 +6,10 @@
     background-color: #fff;
 }
 
+input:focus, textarea:focus, select:focus{
+    outline: none;
+}
+
 #moveableDiv {
     transition: transform 1s ease;
 }
