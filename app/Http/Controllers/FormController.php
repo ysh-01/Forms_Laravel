@@ -104,41 +104,42 @@ Contact us at (123) 456-7890 or no_reply@example.com
 
     public function store(Request $request)
     {
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'questions' => 'required|array',
+            'questions.*.type' => 'required|string|in:multiple_choice,checkbox,dropdown,text',
+            'questions.*.text' => 'required|string',
+            'questions.*.options' => 'nullable|array',
+            'questions.*.required' => 'boolean',
+        ]);
+
+        DB::beginTransaction();
+
         try {
-            $validatedData = $request->validate([
-                'title' => 'required|string|max:255',
-                'description' => 'nullable|string',
-                'questions' => 'required|array',
-                'questions.*.type' => 'required|string|in:multiple_choice,checkbox,dropdown,text',
-                'questions.*.text' => 'required|string',
-                'questions.*.options' => 'nullable|array',
-                'questions.*.required' => 'nullable|boolean',
+            $form = Form::create([
+                'title' => $validatedData['title'],
+                'description' => $validatedData['description'],
+                'user_id' => Auth::id(),
             ]);
 
-
-            $form = new Form();
-            $form->title = $validatedData['title'];
-            $form->description = $validatedData['description'];
-            $form->is_published = $request->input('is_published', false);
-            $form->user_id = Auth::id();
-            $form->save();
-
             foreach ($validatedData['questions'] as $questionData) {
-                $question = new Question();
-                $question->form_id = $form->id;
-                $question->type = $questionData['type'];
-                $question->question_text = $questionData['text'];
-                $question->options = isset($questionData['options']) ? json_encode($questionData['options']) : null;
-                $question->required = isset($questionData['required']) ? $questionData['required'] : false;
+                $question = new Question([
+                    'form_id' => $form->id,
+                    'type' => $questionData['type'],
+                    'question_text' => $questionData['text'],
+                    'options' => json_encode($questionData['options'] ?? []),
+                    'required' => $questionData['required'],
+                ]);
                 $question->save();
             }
 
-
-
-            return response()->json(['success' => true, 'form_id' => $form->id]);
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'Form saved successfully.']);
         } catch (\Exception $e) {
-            Log::error('Error saving form: ' . $e->getMessage(), ['exception' => $e]);
-            return response()->json(['success' => false, 'message' => 'Error saving form'], 500);
+            DB::rollBack();
+            Log::error('Error saving form: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Failed to save form.']);
         }
     }
 

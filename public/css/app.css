@@ -255,3 +255,7 @@ input:focus, textarea:focus, select:focus{
     color: black;
     height: 20px;
 }
+
+.active-question {
+    border-left: 4px solid blue;
+}

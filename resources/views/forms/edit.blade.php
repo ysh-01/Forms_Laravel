@@ -89,7 +89,9 @@
                                     </div>
                                 @endforeach
                             @endif
-                            <button type="button" class="btn btn-secondary" onclick="addOption(this)">Add Option</button>
+                        </div>
+                        <div class="d-flex align-items-center mt-2">
+                            <button type="button" class="btn btn-secondary mr-2" onclick="addOption(this)">Add Option</button>
                             <button class="btn btn-md" id="moveUpButton" onclick="deleteQuestion(this);">
                                 <img src="{{ asset('images/bin.png') }}" alt="" width="20px" height="20px" />
                             </button>
@@ -112,7 +114,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         function addOption(button) {
-            const optionsContainer = $(button).closest('.options-container');
+            const optionsContainer = $(button).closest('.question').find('.options-container');
             const optionIndex = optionsContainer.find('.option').length;
             const questionIndex = optionsContainer.closest('.question').data('index');
 
@@ -152,13 +154,14 @@
                     </div>
                     <div class="form-group form-check">
                         <input type="checkbox" id="question-required-${questionIndex}"
-                            name="questions[${questionIndex}][required]" class="form-check-input"
-                            {{ $question->required ? 'checked' : '' }}>
+                            name="questions[${questionIndex}][required]" class="form-check-input">
                         <label for="question-required-${questionIndex}" class="form-check-label">Required</label>
                     </div>
                     <div class="form-group options-container">
                         <label>Options</label>
-                        <button type="button" class="btn btn-secondary" onclick="addOption(this)">Add Option</button>
+                    </div>
+                    <div class="d-flex align-items-center mt-2">
+                        <button type="button" class="btn btn-secondary mr-2" onclick="addOption(this)">Add Option</button>
                         <button class="btn btn-md" id="moveUpButton" onclick="deleteQuestion(this);">
                             <img src="{{ asset('images/bin.png') }}" alt="" width="20px" height="20px" />
                         </button>

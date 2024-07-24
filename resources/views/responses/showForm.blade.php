@@ -52,72 +52,73 @@
     </div>
 
     <script>
-        document.getElementById('responseForm').addEventListener('submit', function(event) {
-            event.preventDefault();
+        document.addEventListener('DOMContentLoaded', function() {
+            const responseForm = document.getElementById('responseForm');
+            responseForm.addEventListener('submit', function(event) {
+                event.preventDefault();
 
-            const form = event.target;
-            const formData = new FormData(form);
-            let valid = true;
+                const form = event.target;
+                const formData = new FormData(form);
+                let valid = true;
 
-            @foreach ($questions as $question)
-                @if ($question->required)
-                    if (!formData.has('answers[{{ $question->id }}]') || !formData.get('answers[{{ $question->id }}]').trim()) {
-                        valid = false;
+                // @foreach ($questions as $question)
+                //     @if ($question->required)
+                //         const answer = formData.get('answers[{{ $question->id }}]');
+                //         console.log('Question ID:', {{ $question->id }}, 'Answer:', answer);
+                //         if (!answer || !answer.trim()) {
+                //             valid = false;
+                //             Swal.fire({
+                //                 title: 'Error!',
+                //                 text: 'Please answer all required questions.',
+                //                 icon: 'error',
+                //                 confirmButtonText: 'OK'
+                //             });
+                //             return; // Exit the function to prevent further execution
+                //         }
+                //     @endif
+                // @endforeach
+
+                if (valid) {
+                    fetch(form.action, {
+                        method: form.method,
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                title: 'Success!',
+                                text: 'Form submitted successfully.',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = '{{ route('responses.success', $form) }}';
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Error submitting. Answer all required questions',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
                         Swal.fire({
                             title: 'Error!',
-                            text: 'Please answer all required questions.',
+                            text: 'There was an error submitting the form.',
                             icon: 'error',
                             confirmButtonText: 'OK'
                         });
-                        break;
-                    }
-                @endif
-            @endforeach
-
-            if (valid) {
-                fetch(form.action, {
-                    method: form.method,
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        Swal.fire({
-                            title: 'Success!',
-                            text: 'Form submitted successfully.',
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                window.location.href = '{{ route('responses.success', $form) }}';
-                            }
-                        });
-                    } else {
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'Error submitting. Answer all required questions',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                window.location.href = '{{ route('responses.success', $form) }}';
-                            }
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'There was an error submitting the form.',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
                     });
-                });
-            }
+                }
+            });
         });
     </script>
 @endsection
