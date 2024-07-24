@@ -21,25 +21,31 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function changeQuestionType(selectElement) {
-        const questionContainer = selectElement.closest('.question');
-        const optionsContainer = questionContainer.querySelector('.options-container');
-        const addOptionButton = questionContainer.querySelector('.btn-secondary');
+        const questionContainer = selectElement.closest(".question");
+        const optionsContainer =
+            questionContainer.querySelector(".options-container");
+        const addOptionButton =
+            questionContainer.querySelector(".btn-secondary");
         const questionType = selectElement.value;
 
         // Clear the options container
-        optionsContainer.innerHTML = '';
+        optionsContainer.innerHTML = "";
 
-        if (questionType === 'multiple_choice' || questionType === 'checkbox' || questionType === 'dropdown') {
-            const optionDiv = document.createElement('div');
-            optionDiv.className = 'option d-flex align-items-center mb-2';
+        if (
+            questionType === "multiple_choice" ||
+            questionType === "checkbox" ||
+            questionType === "dropdown"
+        ) {
+            const optionDiv = document.createElement("div");
+            optionDiv.className = "option d-flex align-items-center mb-2";
             optionDiv.innerHTML = `
                 <input type="text" name="option" class="form-control option-input" placeholder="Option 1" />
                 <span class="delete-option ml-2 text-danger" onclick="deleteOption(this)" style="cursor: pointer;">&#10005;</span>
             `;
             optionsContainer.appendChild(optionDiv);
-            addOptionButton.style.display = 'inline-block'; // Show the "Add Option" button
-        } else if (questionType === 'text') {
-            addOptionButton.style.display = 'none'; // Hide the "Add Option" button
+            addOptionButton.style.display = "inline-block"; // Show the "Add Option" button
+        } else if (questionType === "text") {
+            addOptionButton.style.display = "none"; // Hide the "Add Option" button
         }
     }
 
@@ -88,34 +94,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateAddButtonPosition() {
         const questions = questionsSection.querySelectorAll(".question");
-    const sidebar = document.getElementById("moveableDiv");
+        const sidebar = document.getElementById("moveableDiv");
 
-    if (questions.length > 0) {
-        const lastQuestion = questions[questions.length - 1];
-        const offsetTop = lastQuestion.offsetTop;
-        const sidebarHeight = sidebar.offsetHeight;
-        const containerHeight = questionsSection.offsetHeight;
+        if (questions.length > 0) {
+            const lastQuestion = questions[questions.length - 1];
+            const offsetTop = lastQuestion.offsetTop;
+            const sidebarHeight = sidebar.offsetHeight;
+            const containerHeight = questionsSection.offsetHeight;
 
-        // Calculate the position of the last question relative to the top of the container
-        const newPosition = offsetTop + lastQuestion.offsetHeight;
+            // Calculate the position of the last question relative to the top of the container
+            const newPosition = offsetTop + lastQuestion.offsetHeight;
 
-        // Ensure the sidebar stays within the bounds of the container
-        if (newPosition + sidebarHeight <= containerHeight) {
-            sidebar.style.transform = `translateY(${newPosition}px)`;
-            console.log(`Moving sidebar to: ${newPosition}px`);
+            // Ensure the sidebar stays within the bounds of the container
+            if (newPosition + sidebarHeight <= containerHeight) {
+                sidebar.style.transform = `translateY(${newPosition}px)`;
+                console.log(`Moving sidebar to: ${newPosition}px`);
+            } else {
+                sidebar.style.transform = `translateY(${
+                    containerHeight - sidebarHeight
+                }px)`;
+                console.log(`Moving sidebar to bottom of container`);
+            }
         } else {
-            sidebar.style.transform = `translateY(${containerHeight - sidebarHeight}px)`;
-            console.log(`Moving sidebar to bottom of container`);
+            sidebar.style.transform = `translateY(0px)`;
+            console.log("No questions, moving sidebar to top");
         }
-    } else {
-        sidebar.style.transform = `translateY(0px)`;
-        console.log("No questions, moving sidebar to top");
-    }
     }
 
     function saveForm() {
         const formTitle = document.getElementById("form-title").value;
-        const formDescription = document.getElementById("form-description").value;
+        const formDescription =
+            document.getElementById("form-description").value;
         const questions = document.querySelectorAll(".question");
         let formData = [];
 
@@ -123,26 +132,34 @@ document.addEventListener("DOMContentLoaded", function () {
 
         questions.forEach((question) => {
             const questionType = question.querySelector("select").value;
-            const questionText = question.querySelector(".question-input").value;
-            const isRequired = question.querySelector(".required-checkbox").checked;
+            const questionText =
+                question.querySelector(".question-input").value;
+            const isRequired =
+                question.querySelector(".required-checkbox").checked;
             let options = [];
 
-            if (questionType === 'multiple_choice' || questionType === 'checkbox' || questionType === 'dropdown') {
-                options = Array.from(question.querySelectorAll(".option-input")).map((input) => input.value);
+            if (
+                questionType === "multiple_choice" ||
+                questionType === "checkbox" ||
+                questionType === "dropdown"
+            ) {
+                options = Array.from(
+                    question.querySelectorAll(".option-input")
+                ).map((input) => input.value);
             }
 
             formData.push({
                 type: questionType,
                 text: questionText,
                 options: options,
-                required: isRequired
+                required: isRequired,
             });
 
             console.log({
                 type: questionType,
                 text: questionText,
                 options: options,
-                required: isRequired
+                required: isRequired,
             });
         });
 
@@ -158,55 +175,46 @@ document.addEventListener("DOMContentLoaded", function () {
         const data = {
             title: formTitle,
             description: formDescription,
-            questions: formData
+            questions: formData,
         };
 
         console.log(data);
-
 
         fetch("/forms", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRF-TOKEN": csrfToken
+                "X-CSRF-TOKEN": csrfToken,
             },
             body: JSON.stringify(data),
         })
-        .then((response) => response.json())
-        .then((result) => {
-            if (result.success) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: 'Form saved successfully.',
-                    icon: 'success',
-                    confirmButtonText: 'OK'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = "/forms";
-                    }
-                });
-            } else {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Failed to save form.',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
-            }
-        })
-        .catch((error) => {
-            console.error("Error saving form:", error);
-            alert("An error occurred while saving the form.");
-        });
+            .then((response) => response.json())
+            .then((result) => {
+                if (result.success) {
+                    Swal.fire({
+                        title: "Success!",
+                        text: "Form saved successfully.",
+                        icon: "success",
+                        confirmButtonText: "OK",
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = "/forms";
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Failed to save form.",
+                        icon: "error",
+                        confirmButtonText: "OK",
+                    });
+                }
+            })
+            .catch((error) => {
+                console.error("Error saving form:", error);
+                alert("An error occurred while saving the form.");
+            });
     }
-
-
-
-
-
-
-
-
 
     window.addNewQuestion = addNewQuestion;
     window.deleteQuestion = deleteQuestion;
@@ -217,7 +225,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // document.getElementById("add-question-button").addEventListener("click", addNewQuestion);
 
-    document.getElementById("questions_section").addEventListener("DOMNodeInserted", updateAddButtonPosition);
-    document.getElementById("questions_section").addEventListener("DOMNodeRemoved", updateAddButtonPosition);
+    document
+        .getElementById("questions_section")
+        .addEventListener("DOMNodeInserted", updateAddButtonPosition);
+    document
+        .getElementById("questions_section")
+        .addEventListener("DOMNodeRemoved", updateAddButtonPosition);
 });
-

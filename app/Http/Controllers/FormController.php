@@ -55,94 +55,92 @@ class FormController extends Controller
 
 
     public function createWithTemplate($template)
-{
-    $data = [];
+    {
+        $data = [];
 
-    switch ($template) {
-        case 'contact':
-            $data = [
-                'title' => 'Contact Information',
-                'description' => 'Template for collecting contact information.',
-                'questions' => [
-                    ['type' => 'text', 'question_text' => 'Name'],
-                    ['type' => 'text', 'question_text' => 'Email'],
-                    // Add more questions as needed
-                ],
-            ];
-            break;
+        switch ($template) {
+            case 'contact':
+                $data = [
+                    'title' => 'Contact Information',
+                    'description' => 'Template for collecting contact information.',
+                    'questions' => [
+                        ['type' => 'text', 'question_text' => 'Name'],
+                        ['type' => 'text', 'question_text' => 'Email'],
+                        // Add more questions as needed
+                    ],
+                ];
+                break;
 
-        case 'rsvp':
-            $data = [
-                'title' => 'RSVP',
-                'description' => 'Event Address: 123 Your Street Your City, ST 12345
+            case 'rsvp':
+                $data = [
+                    'title' => 'RSVP',
+                    'description' => 'Event Address: 123 Your Street Your City, ST 12345
 Contact us at (123) 456-7890 or no_reply@example.com
 ',
-                'questions' => [
-                    ['type' => 'text', 'question_text' => 'Can you attend?'],
-                    ['type' => 'text', 'question_text' => 'Number of Guests'],
-                    // Add more questions as needed
-                ],
-            ];
-            break;
+                    'questions' => [
+                        ['type' => 'text', 'question_text' => 'Can you attend?'],
+                        ['type' => 'text', 'question_text' => 'Number of Guests'],
+                    ],
+                ];
+                break;
 
-        case 'party':
-            $data = [
-                'title' => 'Party Invite',
-                'description' => 'Template for party invitations.',
-                'questions' => [
-                    ['type' => 'text', 'question_text' => 'Name'],
-                    ['type' => 'text', 'question_text' => 'RSVP Status'],
-                    // Add more questions as needed
-                ],
-            ];
-            break;
+            case 'party':
+                $data = [
+                    'title' => 'Party Invite',
+                    'description' => 'Template for party invitations.',
+                    'questions' => [
+                        ['type' => 'text', 'question_text' => 'Name'],
+                        ['type' => 'text', 'question_text' => 'RSVP Status'],
+                    ],
+                ];
+                break;
+        }
+
+        return view('forms.create', ['data' => $data]);
     }
-
-    return view('forms.create', ['data' => $data]);
-}
 
 
 
 
     public function store(Request $request)
-{
-    try {
-        $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'questions' => 'required|array',
-            'questions.*.type' => 'required|string|in:multiple_choice,checkbox,dropdown,text',
-            'questions.*.text' => 'required|string',
-            'questions.*.options' => 'nullable|array',
-            'questions.*.required' => 'nullable|boolean',
-        ]);
+    {
+        try {
+            $validatedData = $request->validate([
+                'title' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'questions' => 'required|array',
+                'questions.*.type' => 'required|string|in:multiple_choice,checkbox,dropdown,text',
+                'questions.*.text' => 'required|string',
+                'questions.*.options' => 'nullable|array',
+                'questions.*.required' => 'nullable|boolean',
+            ]);
 
 
-        $form = new Form();
-        $form->title = $validatedData['title'];
-        $form->description = $validatedData['description'];
-        $form->is_published = $request->input('is_published', false);
-        $form->user_id = Auth::id();
-        $form->save();
+            $form = new Form();
+            $form->title = $validatedData['title'];
+            $form->description = $validatedData['description'];
+            $form->is_published = $request->input('is_published', false);
+            $form->user_id = Auth::id();
+            $form->save();
 
-        foreach ($validatedData['questions'] as $questionData) {
-            $question = new Question();
-            $question->form_id = $form->id;
-            $question->type = $questionData['type'];
-            $question->question_text = $questionData['text'];
-            $question->options = isset($questionData['options']) ? json_encode($questionData['options']) : null;
-            $question->required = isset($questionData['required']) ? $questionData['required'] : false;
-            $question->save();
+            foreach ($validatedData['questions'] as $questionData) {
+                $question = new Question();
+                $question->form_id = $form->id;
+                $question->type = $questionData['type'];
+                $question->question_text = $questionData['text'];
+                $question->options = isset($questionData['options']) ? json_encode($questionData['options']) : null;
+                $question->required = isset($questionData['required']) ? $questionData['required'] : false;
+                $question->save();
+            }
+
+
+
+            return response()->json(['success' => true, 'form_id' => $form->id]);
+        } catch (\Exception $e) {
+            Log::error('Error saving form: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['success' => false, 'message' => 'Error saving form'], 500);
         }
-
-
-
-        return response()->json(['success' => true, 'form_id' => $form->id]);
-    } catch (\Exception $e) {
-        Log::error('Error saving form: ' . $e->getMessage(), ['exception' => $e]);
-        return response()->json(['success' => false, 'message' => 'Error saving form'], 500);
     }
-}
 
     public function show(Form $form)
     {

@@ -18,7 +18,7 @@
             <a href="/forms" class="d-flex align-items-center">
                 <img src="{{ asset('images/google-form.png') }}" alt="Google Form Icon" height="40px" width="40px" />
             </a>
-            <h2 style="color: rgb(103,58,183)" class="ml-3">{{ $form->title }} - Response Detail</h2>
+            <h4 style="color: rgb(103,58,183)" class="ml-3">{{ $form->title }} - Response Detail</h4>
         </div>
     </header>
 

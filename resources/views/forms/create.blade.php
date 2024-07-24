@@ -47,14 +47,14 @@
     <div style="background-color: #f4f4f9; max-width: 100%" class="question_form p-4 rounded">
         <div class="section">
             <div class="question_title_section mb-4">
-                <div class="question_form_top">
+                <div style="border-bottom:5px; border-radius:5px;" class="question_form_top shadow-sm">
                     <input type="text" id="form-title" name="title" value="{{ $data['title'] ?? '' }}" class="form-control form-control-lg p-2 mb-2" placeholder="Untitled Form" />
                     <input type="text" name="description" id="form-description" value="{{ $data['description'] ?? '' }}" class="form-control form-control-sm" placeholder="Form Description" />
                 </div>
             </div>
         </div>
         <div class="section" id="questions_section">
-            <div class="question mb-4 p-4 border rounded bg-white">
+            <div class="question mb-4 p-4 border rounded bg-white shadow-sm">
                 <select class="form-control question_type mb-1" onchange="changeQuestionType(this)">
                     <option value="">Select Question Type</option>
                     <option value="multiple_choice">Multiple Choice</option>

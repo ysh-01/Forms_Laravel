@@ -17,14 +17,14 @@ class QuestionController extends Controller
 
     public function store(Form $form, Request $request)
     {
-        // Validate question data
+
         $validatedData = $request->validate([
             'type' => 'required|string|in:multiple_choice,checkbox,dropdown,short_answer,long_answer',
             'question_text' => 'required|string',
-            'options' => 'nullable|array', // If needed based on question type
+            'options' => 'nullable|array',
         ]);
 
-        // Create new question for the form
+
         $question = new Question();
         $question->form_id = $form->id;
         $question->type = $validatedData['type'];
@@ -42,14 +42,14 @@ class QuestionController extends Controller
 
     public function update(Form $form, Question $question, Request $request)
     {
-        // Validate updated question data
+
         $validatedData = $request->validate([
             'type' => 'required|string|in:multiple_choice,checkbox,dropdown,short_answer,long_answer',
             'question_text' => 'required|string',
-            'options' => 'nullable|array', // If needed based on question type
+            'options' => 'nullable|array',
         ]);
 
-        // Update question details
+
         $question->type = $validatedData['type'];
         $question->question_text = $validatedData['question_text'];
         $question->options = $validatedData['options'] ?? null;
