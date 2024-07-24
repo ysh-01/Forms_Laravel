@@ -21,7 +21,7 @@
 </head>
 
 <body class="bg-purple-100">
-    <nav class="bg-white p-1 shadow-md">
+    <nav class="bg-white p-0.5 shadow-md">
         <div class="container mx-auto flex justify-between items-center">
             <span style="color: rgb(103,58,183)" class="text-3xl font-bold font-sans"><a href="{{ url('/') }}"
                     style="color: rgb(103,58,183)" class="text-3xl font-bold font-sans">LaraForms</a> - Edit</span>

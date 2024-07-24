@@ -62,7 +62,7 @@
                     <option value="dropdown">Dropdown</option>
                     <option value="text">Text</option>
                 </select>
-                <input style="border:none; border-bottom: 2px solid rgb(103,58,183); border-radius:0" type="text" name="question" class="form-control question-input mb-3" placeholder="Type your question here" />
+                <input style="border:none; border-bottom: 2px solid rgb(103,58,183); border-radius:0; color:black" type="text" name="question" class="form-control question-input mb-3" placeholder="Type your question here" />
                 <div class="options-container mb-3">
 
                 </div>

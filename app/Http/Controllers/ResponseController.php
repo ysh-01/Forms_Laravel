@@ -118,13 +118,13 @@ class ResponseController extends Controller
 
 
         $validatedData = $request->validate([
-            'answers' => 'required|array',
-            'answers.*' => 'required',
+            'answers' => 'array',
+            'answers.*' => '',
         ]);
 
 
         foreach ($requiredQuestionIds as $requiredQuestionId) {
-            if (!array_key_exists($requiredQuestionId, $validatedData['answers'])) {
+            if (!isset($validatedData['answers'][$requiredQuestionId]) || empty($validatedData['answers'][$requiredQuestionId])) {
                 return redirect()->back()
                     ->withErrors(['errors' => 'Please answer all required questions.'])
                     ->withInput();

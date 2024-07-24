@@ -12,10 +12,8 @@ export default defineConfig({
         }),
     ],
     server: {
-        host: '0.0.0.0',
-        port: 3000,
-        hmr: {
-            host: '192.168.2.179',
-        },
-    },
+        // host: '192.168.29.229',
+        host: '192.168.2.179',
+        port: 5173
+      },
 });

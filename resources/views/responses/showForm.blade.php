@@ -75,9 +75,9 @@
                     });
                 } else {
                     Swal.fire({
-                        title: 'Success!',
-                        text: 'Form submitted successfully.',
-                        icon: 'success',
+                        title: 'Error!',
+                        text: 'Error submitting. Answer all required questions',
+                        icon: 'error',
                         confirmButtonText: 'OK'
                     }).then((result) => {
                         if (result.isConfirmed) {
