@@ -23,9 +23,9 @@
     </header>
 
 
-    <div class="container mt-4">
+    <div style="max-width: 100%;" class="container mt-4">
         <!-- Responses Section -->
-        <div class="question_form bg-light p-4 rounded shadow-md" id="responses_section">
+        <div style="max-width: 100%;" class="question_form bg-light p-1 rounded shadow-md" id="responses_section">
             <div class="section">
                 <div class="question_title_section mb-4">
                     <div class="question_form_top">
