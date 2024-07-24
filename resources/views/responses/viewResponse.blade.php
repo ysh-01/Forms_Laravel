@@ -14,7 +14,7 @@
 </head>
 <body class="font-open-sans">
     <header class="bg-white shadow-md py-1">
-        <div class="container d-flex justify-content-start align-items-center">
+        <div class="container d-flex justify-content-start align-items-center shadow-md">
             <a href="/forms" class="d-flex align-items-center">
                 <img src="{{ asset('images/google-form.png') }}" alt="Google Form Icon" height="40px" width="40px" />
             </a>
@@ -24,7 +24,7 @@
 
     <div  mt-4">
         <!-- Responses Section -->
-        <div class="question_form bg-light p-4 rounded shadow-sm" id="responses_section">
+        <div class="question_form bg-light p-4 rounded shadow-md" id="responses_section">
             <div class="section">
                 <div class="question_title_section mb-4">
                     <div class="question_form_top">
@@ -33,14 +33,14 @@
                     </div>
                 </div>
             </div>
-            <div class="section" id="questions_section">
+            <div class="section shadow-md" id="questions_section">
                 @foreach ($responses as $response)
                     @php
                         $question = $questions[$response->question_id] ?? null;
                         $decodedAnswers = json_decode($response->answers, true);
                     @endphp
                     @if ($question)
-                        <div class="question mb-4 p-3 border rounded bg-white">
+                        <div class="question mb-4 p-3 border rounded bg-white shadow-md">
                             <h3 class="text-lg font-medium mb-2">{{ $question->question_text }}</h3>
                             @if ($question->type == 'dropdown')
                                 <select disabled class="form-control">
