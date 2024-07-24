@@ -31,33 +31,27 @@ class ResponseController extends Controller
 
     public function viewResponse(Form $form, $responseId)
     {
-
         $responses = Response::where('response_id', $responseId)
             ->where('form_id', $form->id)
             ->get();
 
-
-        $questions = Question::where('form_id', $form->id)->get()->keyBy('id');
-
-
-        $statistics = [];
-        foreach ($questions as $question) {
-            $statistics[$question->id] = [
-                'question_text' => $question->question_text,
-                'type' => $question->type,
-                'options' => json_decode($question->options),
-                'responses' => []
-            ];
-
-            foreach ($responses as $response) {
-                $decodedAnswers = json_decode($response->answers, true);
-                if (isset($decodedAnswers[$question->id])) {
-                    $statistics[$question->id]['responses'][] = $decodedAnswers[$question->id];
-                }
-            }
+        if ($responses->isEmpty()) {
+            abort(404, 'Response not found');
         }
 
-        return view('responses.viewResponse', compact('form', 'responses', 'questions', 'statistics'));
+        $formSnapshot = json_decode($responses->first()->form_snapshot, true);
+
+        if (is_null($formSnapshot) || !isset($formSnapshot['questions'])) {
+            Log::error('Form snapshot is null or does not contain questions', [
+                'response_id' => $responseId,
+                'form_snapshot' => $responses->first()->form_snapshot
+            ]);
+            abort(500, 'Form snapshot is invalid');
+        }
+
+        $questions = collect($formSnapshot['questions'])->keyBy('id');
+
+        return view('responses.viewResponse', compact('form', 'responses', 'questions'));
     }
 
 
@@ -108,34 +102,39 @@ class ResponseController extends Controller
 
     public function submitForm(Request $request, Form $form)
     {
-        Log::info($request->all());
-
+        Log::info('Form submission started', $request->all());
 
         $questions = $form->questions;
 
-
         $requiredQuestionIds = $questions->where('required', true)->pluck('id')->toArray();
-
 
         $validatedData = $request->validate([
             'answers' => 'array',
             'answers.*' => '',
         ]);
 
-
         foreach ($requiredQuestionIds as $requiredQuestionId) {
             if (!isset($validatedData['answers'][$requiredQuestionId]) || empty($validatedData['answers'][$requiredQuestionId])) {
-                return redirect()->back()
-                    ->withErrors(['errors' => 'Please answer all required questions.'])
-                    ->withInput();
+                return response()->json(['success' => false, 'message' => 'Please answer all required questions.']);
             }
         }
 
-        Log::info($validatedData);
-
+        Log::info('Validation passed', $validatedData);
 
         $responseId = Uuid::uuid4()->toString();
 
+        $formSnapshot = [
+            'title' => $form->title,
+            'description' => $form->description,
+            'questions' => $questions->map(function ($question) {
+                return [
+                    'id' => $question->id,
+                    'question_text' => $question->question_text,
+                    'type' => $question->type,
+                    'options' => $question->options,
+                ];
+            })->toArray(),
+        ];
 
         foreach ($validatedData['answers'] as $questionId => $answer) {
             $response = new Response();
@@ -145,10 +144,12 @@ class ResponseController extends Controller
             $response->user_id = auth()->id();
             $response->answers = json_encode($answer);
             $response->submitted_at = now();
+            $response->form_snapshot = json_encode($formSnapshot);
             $response->save();
+
+            Log::info('Response saved', $response->toArray());
         }
 
-        return redirect()->route('responses.showForm', $form)
-            ->with('success', 'Response submitted successfully.');
+        return response()->json(['success' => true, 'message' => 'Response submitted successfully.']);
     }
 }

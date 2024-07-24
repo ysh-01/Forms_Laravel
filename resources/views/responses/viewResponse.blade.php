@@ -22,50 +22,49 @@
         </div>
     </header>
 
-    <div  mt-4">
+
+    <div class="container mt-4">
         <!-- Responses Section -->
         <div class="question_form bg-light p-4 rounded shadow-md" id="responses_section">
             <div class="section">
                 <div class="question_title_section mb-4">
                     <div class="question_form_top">
                         <input type="text" id="form-title" name="title" class="form-control form-control-lg mb-2" style="color: black" placeholder="Untitled Form" value="{{ $form->title }}" readonly />
-                        <input type="text" name="description" id="form-description" class="form-control form-control-sm" style="color: black" value="{{$form->description}}" readonly/>
+                        <input type="text" name="description" id="form-description" class="form-control form-control-sm" style="color: black" value="{{ $form->description }}" readonly/>
                     </div>
                 </div>
             </div>
             <div class="section shadow-md" id="questions_section">
                 @foreach ($responses as $response)
                     @php
-                        $question = $questions[$response->question_id] ?? null;
+                        $question = $questions[$response->question_id];
                         $decodedAnswers = json_decode($response->answers, true);
                     @endphp
-                    @if ($question)
-                        <div class="question mb-4 p-3 border rounded bg-white shadow-md">
-                            <h3 class="text-lg font-medium mb-2">{{ $question->question_text }}</h3>
-                            @if ($question->type == 'dropdown')
-                                <select disabled class="form-control">
-                                    @foreach (json_decode($question->options) as $option)
-                                        <option {{ ($option == $decodedAnswers) ? 'selected' : '' }}>
-                                            {{ $option }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            @elseif (in_array($question->type, ['multiple_choice', 'checkbox']))
-                                <div class="options-container mb-3">
-                                    @foreach (json_decode($question->options) as $option)
-                                        <div class="option d-flex align-items-center mb-2">
-                                            <input type="{{ $question->type == 'checkbox' ? 'checkbox' : 'radio' }}" disabled {{ in_array($option, (array)$decodedAnswers) ? 'checked' : '' }} class="mr-2">
-                                            {{ $option }}
-                                        </div>
-                                    @endforeach
-                                </div>
-                            @else
-                                <p class="mt-2 p-3 bg-light rounded">{{ is_array($decodedAnswers) ? implode(', ', $decodedAnswers) : $decodedAnswers }}</p>
-                            @endif
-                        </div>
-                    @else
-                        <p class="text-danger">Question not found for ID: {{ $response->question_id }}</p>
-                    @endif
+                    <div class="question mb-4 p-3 border rounded bg-white shadow-md">
+                        <h3 class="text-lg font-medium mb-2">
+                            {{ $question['question_text'] }}
+                        </h3>
+                        @if ($question['type'] == 'dropdown')
+                            <select disabled class="form-control">
+                                @foreach (json_decode($question['options'] ?? '[]') as $option)
+                                    <option {{ ($option == $decodedAnswers) ? 'selected' : '' }}>
+                                        {{ $option }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        @elseif (in_array($question['type'], ['multiple_choice', 'checkbox']))
+                            <div class="options-container mb-3">
+                                @foreach (json_decode($question['options'] ?? '[]') as $option)
+                                    <div class="option d-flex align-items-center mb-2">
+                                        <input type="{{ $question['type'] == 'checkbox' ? 'checkbox' : 'radio' }}" disabled {{ in_array($option, (array)$decodedAnswers) ? 'checked' : '' }} class="mr-2">
+                                        {{ $option }}
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <p class="mt-2 p-3 bg-light rounded">{{ is_array($decodedAnswers) ? implode(', ', $decodedAnswers) : $decodedAnswers }}</p>
+                        @endif
+                    </div>
                 @endforeach
             </div>
         </div>

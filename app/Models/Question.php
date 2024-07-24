@@ -1,24 +1,20 @@
 <?php
 
 namespace App\Models;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Question extends Model
 {
+    use SoftDeletes;
     use HasFactory;
-    protected $fillable = ['form_id', 'user_id', 'submitted_at', 'answers'];
+    protected $fillable = ['form_id', 'type', 'question_text', 'options', 'required'];
 
     protected $casts = [
-        'answers' => 'array',
         'options' => 'array',
+        'required' => 'boolean',
     ];
-
-    public function getOptionsAttribute($value)
-    {
-        return json_decode($value, true);
-    }
 
     public function form()
     {

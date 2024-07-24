@@ -59,6 +59,7 @@
             <div id="questions-section">
                 @foreach ($questions as $index => $question)
                     <div class="question mb-4 p-3 border rounded bg-light" data-index="{{ $index }}">
+                        <input type="hidden" name="questions[{{ $index }}][id]" value="{{ $question->id }}">
                         <div class="form-group">
                             <select class="form-control question-type" id="question-type-{{ $index }}" name="questions[{{ $index }}][type]">
                                 <option value="multiple_choice" {{ $question->type === 'multiple_choice' ? 'selected' : '' }}>Multiple Choice</option>
@@ -137,6 +138,7 @@
 
             const questionHtml = `
                 <div class="question mb-4 p-3 border rounded bg-light" data-index="${questionIndex}">
+                    <input type="hidden" name="questions[${questionIndex}][id]" value="">
                     <div class="form-group">
                         <select class="form-control question-type" id="question-type-${questionIndex}" name="questions[${questionIndex}][type]" onchange="handleQuestionTypeChange(this)">
                             <option value="multiple_choice">Multiple Choice</option>
@@ -149,10 +151,10 @@
                         <input type="text" id="question-text-${questionIndex}" name="questions[${questionIndex}][text]" class="form-control question-input" placeholder="Type your question here" required>
                     </div>
                     <div class="form-group form-check">
-                        <input type="checkbox" id="question-required-{{ $index }}"
-                            name="questions[{{ $index }}][required]" class="form-check-input"
+                        <input type="checkbox" id="question-required-${questionIndex}"
+                            name="questions[${questionIndex}][required]" class="form-check-input"
                             {{ $question->required ? 'checked' : '' }}>
-                        <label for="question-required-{{ $index }}" class="form-check-label">Required</label>
+                        <label for="question-required-${questionIndex}" class="form-check-label">Required</label>
                     </div>
                     <div class="form-group options-container">
                         <label>Options</label>
@@ -239,16 +241,14 @@
             });
 
             updateAddButtonPosition();
+
+            $('#edit-form').on('submit', function(e) {
+                e.preventDefault();
+                updateQuestionIndices();
+                this.submit();
+            });
         });
     </script>
 </body>
 
 </html>
-
-
-
-
-
-
-
-

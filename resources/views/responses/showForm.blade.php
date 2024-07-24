@@ -12,7 +12,12 @@
                 @csrf
                 @foreach ($questions as $question)
                     <div class="mt-6">
-                        <label class="block font-medium text-base text-gray-800 mb-2">{{ $question->question_text }}</label>
+                        <label class="block font-medium text-base text-gray-800 mb-2">
+                            {{ $question->question_text }}
+                            @if ($question->required)
+                                <span class="text-red-600">*</span>
+                            @endif
+                        </label>
                         @if ($question->type == 'multiple_choice')
                             @foreach (json_decode($question->options) as $option)
                                 <label class="flex items-center mt-2">
@@ -52,53 +57,67 @@
 
             const form = event.target;
             const formData = new FormData(form);
+            let valid = true;
 
-            fetch(form.action, {
-                method: form.method,
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire({
-                        title: 'Success!',
-                        text: 'Form submitted successfully.',
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.href = '{{ route('responses.success', $form) }}';
-                        }
-                    });
-                } else {
+            @foreach ($questions as $question)
+                @if ($question->required)
+                    if (!formData.has('answers[{{ $question->id }}]') || !formData.get('answers[{{ $question->id }}]').trim()) {
+                        valid = false;
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Please answer all required questions.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                        break;
+                    }
+                @endif
+            @endforeach
+
+            if (valid) {
+                fetch(form.action, {
+                    method: form.method,
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Form submitted successfully.',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '{{ route('responses.success', $form) }}';
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Error submitting. Answer all required questions',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '{{ route('responses.success', $form) }}';
+                            }
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
                     Swal.fire({
                         title: 'Error!',
-                        text: 'Error submitting. Answer all required questions',
+                        text: 'There was an error submitting the form.',
                         icon: 'error',
                         confirmButtonText: 'OK'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.href = '{{ route('responses.success', $form) }}';
-                        }
                     });
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire({
-                    title: 'Success!',
-                    text: 'Form submitted successfully.',
-                    icon: 'success',
-                    confirmButtonText: 'OK'
-                }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.href = '{{ route('responses.success', $form) }}';
-                        }
-                    });
-            });
+                });
+            }
         });
     </script>
 @endsection

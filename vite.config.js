@@ -11,9 +11,4 @@ export default defineConfig({
             refresh: true,
         }),
     ],
-    server: {
-        // host: '192.168.29.229',
-        host: '192.168.2.179',
-        port: 5173
-      },
 });

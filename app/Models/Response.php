@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Response extends Model
 {
     use HasFactory;
-    protected $fillable = ['form_id', 'user_id', 'answers'];
+    protected $fillable = ['form_id', 'user_id', 'response_id', 'question_id', 'answers', 'submitted_at', 'form_snapshot'];
 
     // Define relationships
     public function form()
