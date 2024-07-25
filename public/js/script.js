@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const optionDiv = document.createElement("div");
         optionDiv.className = "option";
         optionDiv.innerHTML = `
-            <input type="text" class="form-control option-input" placeholder="New Option" />
+            <input type="text" class="form-control option-input mb-1" placeholder="New Option" />
             <span class="delete-option" onclick="deleteOption(this)">&#10005;</span>
         `;
         optionContainer.appendChild(optionDiv);
