@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->boolean('is_published')->default(false); // New column for published status
             $table->timestamps();
+            $table->softDeletes(); // Add this line
         });
     }
 
@@ -29,3 +30,4 @@ return new class extends Migration
         Schema::dropIfExists('forms');
     }
 };
+

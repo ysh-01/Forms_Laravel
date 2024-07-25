@@ -18,7 +18,7 @@ class FormController extends Controller
     {
         $totalForms = Form::count();
         $publishedForms = Form::where('is_published', true)->count();
-        $totalResponses = Response::count();
+        $totalResponses = Response::distinct('response_id')->count('response_id');
 
         $forms = Form::where('user_id', Auth::id())->orderBy('created_at', 'desc')->get();
         return view('forms.index', [

@@ -57,30 +57,39 @@ class ResponseController extends Controller
 
     public function viewResponses(Form $form)
     {
-
         $responses = Response::where('form_id', $form->id)
             ->orderBy('submitted_at', 'desc')
             ->get()
             ->groupBy('response_id');
 
-
         $questions = Question::where('form_id', $form->id)->get()->keyBy('id');
-
 
         $statistics = [];
         foreach ($questions as $question) {
+            $options = json_decode($question->options, true) ?? [];
             $statistics[$question->id] = [
                 'question_text' => $question->question_text,
                 'type' => $question->type,
-                'options' => json_decode($question->options, true),
-                'responses' => [],
+                'options' => $options,
+                'responses' => array_fill_keys($options, 0), // Initialize all options with 0 count
             ];
 
             foreach ($responses as $responseGroup) {
                 foreach ($responseGroup as $response) {
                     $decodedAnswers = json_decode($response->answers, true);
                     if (isset($decodedAnswers[$question->id])) {
-                        $statistics[$question->id]['responses'][] = $decodedAnswers[$question->id];
+                        $answer = $decodedAnswers[$question->id];
+                        if (is_array($answer)) {
+                            foreach ($answer as $option) {
+                                if (isset($statistics[$question->id]['responses'][$option])) {
+                                    $statistics[$question->id]['responses'][$option]++;
+                                }
+                            }
+                        } else {
+                            if (isset($statistics[$question->id]['responses'][$answer])) {
+                                $statistics[$question->id]['responses'][$answer]++;
+                            }
+                        }
                     }
                 }
             }

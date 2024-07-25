@@ -9,6 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Add DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
 </head>
 
 <body class="font-roboto text-gray-800 bg-white">
@@ -35,15 +37,17 @@
             </div>
         </div>
     </div>
-    {{-- <div class="text-sm font-medium text-center text-purple-700 border-b border-black-700 dark:text-gray-400 dark:border-gray-700 hover: border-b-2">
-        <ul class="flex flex-wrap -mb-px">
-            <li class="mr-2">
-                <a href="javascript:void(0);" onclick="showTab('responses_tab')" class="tab-link text-black-600 font-bold inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-purple-700 ">Responses</a>
-            </li>
-            <li class="mr-2">
-                <a href="javascript:void(0);" onclick="showTab('statistics_tab')" class="tab-link text-black-600 font-bold inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-purple-700 ">Statistics</a>
-            </li>
-        </ul>
+
+    <!-- Tab Navigation -->
+    {{-- <div class="bg-gray-100 px-6 py-4">
+        <div class="flex space-x-4">
+            <button id="responsesTabButton" class="tab-button text-purple-900 font-semibold border-b-2 border-purple-900 focus:outline-none">
+                Responses
+            </button>
+            <button id="statisticsTabButton" class="tab-button text-gray-600 font-semibold focus:outline-none">
+                Statistics
+            </button>
+        </div>
     </div> --}}
 
     <!-- Main Content -->
@@ -79,7 +83,7 @@
             <p class="text-gray-600">No responses available.</p>
             @else
             <div class="overflow-x-auto">
-                <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+                <table id="responsesTable" class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
                     <thead class="bg-gray-200 text-black text-sm leading-normal">
                         <tr>
                             <th class="py-3 px-6 text-left">User</th>
@@ -114,16 +118,20 @@
         </div>
 
         <!-- Statistics Tab -->
-        {{-- <div id="statistics_tab" class="tab-content hidden w-3/6">
+        <div id="statistics_tab" class="tab-content hidden">
             <h2 class="text-xl font-semibold mb-6">Statistics</h2>
 
             @foreach ($statistics as $questionId => $stat)
-            <div class="mb-8">
-                <h3 class="text-lg font-semibold mb-4">{{ $stat['question_text'] }}</h3>
-                <canvas id="chart-{{ $questionId }}"></canvas>
-            </div>
+                @if (in_array($stat['type'], ['multiple_choice', 'checkbox', 'dropdown']))
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold mb-4">{{ $stat['question_text'] }}</h3>
+                    <div style="width: 100%; max-width: 600px; margin: auto;">
+                        <canvas id="chart-{{ $questionId }}" width="400" height="200"></canvas>
+                    </div>
+                </div>
+                @endif
             @endforeach
-        </div> --}}
+        </div>
     </div>
 
     <!-- Script for Copy Link Functionality -->
@@ -142,10 +150,96 @@
             }, 2000);
         }
 
+        // Add this script to render charts
+        document.addEventListener('DOMContentLoaded', function () {
+            @foreach ($statistics as $questionId => $stat)
+                @if (in_array($stat['type'], ['multiple_choice', 'checkbox', 'dropdown']))
+                console.log('Rendering chart for question:', {!! json_encode($stat) !!});
+                var ctx = document.getElementById('chart-{{ $questionId }}');
+                if (!ctx) {
+                    console.error('Canvas element not found for question ID:', {{ $questionId }});
+                    return;
+                }
+                var chartType = '{{ in_array($stat['type'], ['multiple_choice', 'dropdown']) ? 'pie' : 'bar' }}';
+                var labels = {!! json_encode(array_keys($stat['responses'])) !!};
+                var data = {!! json_encode(array_values($stat['responses'])) !!};
+                console.log('Chart data:', { labels, data });
+                var chartData = {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: chartType === 'pie'
+                            ? ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40']
+                            : '#36A2EB'
+                    }]
+                };
+                try {
+                    new Chart(ctx, {
+                        type: chartType,
+                        data: chartData,
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: chartType === 'bar' ? {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        stepSize: 1
+                                    }
+                                }
+                            } : {},
+                            plugins: {
+                                legend: {
+                                    display: chartType === 'pie'
+                                }
+                            }
+                        }
+                    });
+                    console.log('Chart created successfully for question ID:', {{ $questionId }});
+                } catch (error) {
+                    console.error('Error creating chart:', error);
+                }
+                @endif
+            @endforeach
+        });
+
+        // Tab functionality
+        document.getElementById('responsesTabButton').addEventListener('click', function() {
+            document.getElementById('responses_tab').classList.remove('hidden');
+            document.getElementById('statistics_tab').classList.add('hidden');
+            this.classList.add('text-purple-900', 'border-purple-900');
+            this.classList.remove('text-gray-600');
+            document.getElementById('statisticsTabButton').classList.remove('text-purple-900', 'border-purple-900');
+            document.getElementById('statisticsTabButton').classList.add('text-gray-600');
+        });
+
+        document.getElementById('statisticsTabButton').addEventListener('click', function() {
+            document.getElementById('statistics_tab').classList.remove('hidden');
+            document.getElementById('responses_tab').classList.add('hidden');
+            this.classList.add('text-purple-900', 'border-purple-900');
+            this.classList.remove('text-gray-600');
+            document.getElementById('responsesTabButton').classList.remove('text-purple-900', 'border-purple-900');
+            document.getElementById('responsesTabButton').classList.add('text-gray-600');
+        });
     </script>
 
     <!-- Custom Scripts -->
     <script src="{{ asset('js/script.js') }}"></script>
+    <!-- Add DataTables JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#responsesTable').DataTable({ // Initialize DataTables with search and sort functionality
+                "paging": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true
+            });
+        });
+    </script>
 </body>
 
 </html>
