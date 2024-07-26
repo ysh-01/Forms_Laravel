@@ -117,16 +117,23 @@ function setActiveQuestion(questionElement) {
 
     function updateAddButtonPosition() {
         const sidebar = document.getElementById("moveableDiv");
+        const firstQuestion = document.querySelector('.question');
 
-    if (activeQuestion) {
-        const rect = activeQuestion.getBoundingClientRect();
-        const containerRect = questionsSection.getBoundingClientRect();
-        const newPosition = rect.top - containerRect.top + rect.height;
+        if (activeQuestion) {
+            const rect = activeQuestion.getBoundingClientRect();
+            const containerRect = questionsSection.getBoundingClientRect();
+            const newPosition = rect.top - containerRect.top + rect.height;
 
-        sidebar.style.transform = `translateY(${newPosition}px)`;
-    } else {
-        sidebar.style.transform = `translateY(0px)`;
-    }
+            sidebar.style.transform = `translateY(${newPosition}px)`;
+        } else if (firstQuestion) {
+            const rect = firstQuestion.getBoundingClientRect();
+            const containerRect = questionsSection.getBoundingClientRect();
+            const newPosition = rect.top - containerRect.top + rect.height;
+
+            sidebar.style.transform = `translateY(${newPosition}px)`;
+        } else {
+            sidebar.style.transform = `translateY(0px)`;
+        }
     }
 
     function saveForm() {
@@ -238,4 +245,6 @@ function setActiveQuestion(questionElement) {
     document
         .getElementById("questions_section")
         .addEventListener("DOMNodeRemoved", updateAddButtonPosition);
+
+    updateAddButtonPosition();
 });
