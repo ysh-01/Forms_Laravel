@@ -157,63 +157,80 @@ Contact us at (123) 456-7890 or no_reply@example.com
 
 
     public function update(Request $request, Form $form)
-{
-    try {
-        // Normalize the 'required' field to boolean
-        if ($request->has('questions')) {
-            $questions = $request->input('questions');
-            foreach ($questions as $index => $question) {
-                if (isset($question['required']) && $question['required'] === 'on') {
-                    $questions[$index]['required'] = true;
+    {
+        try {
+            // Normalize the 'required' field to boolean
+            if ($request->has('questions')) {
+                $questions = $request->input('questions');
+                foreach ($questions as $index => $question) {
+                    $questions[$index]['required'] = isset($question['required']) && $question['required'] === 'on';
+                }
+                $request->merge(['questions' => $questions]);
+            }
+
+            // Validate the request
+            $validatedData = $request->validate([
+                'title' => 'required|string|max:255',
+                'description' => 'nullable|string|max:255',
+                'questions' => 'required|array',
+                'questions.*.id' => 'nullable|exists:questions,id',
+                'questions.*.type' => 'required|string|in:multiple_choice,checkbox,dropdown,text',
+                'questions.*.text' => 'required|string|max:255',
+                'questions.*.options' => 'nullable|array',
+                'questions.*.options.*' => 'nullable|string|max:255',
+                'questions.*.required' => 'boolean',
+            ]);
+
+            DB::beginTransaction();
+
+            // Update form
+            $form->update([
+                'title' => $validatedData['title'],
+                'description' => $validatedData['description'],
+            ]);
+
+            // Get existing question IDs
+            $existingQuestionIds = $form->questions()->pluck('id')->toArray();
+
+            // Update or create questions
+            foreach ($validatedData['questions'] as $questionData) {
+                if (isset($questionData['id'])) {
+                    // Update existing question
+                    $question = Question::find($questionData['id']);
+                    if ($question) {
+                        $question->update([
+                            'type' => $questionData['type'],
+                            'question_text' => $questionData['text'],
+                            'options' => json_encode($questionData['options'] ?? []),
+                            'required' => $questionData['required'],
+                        ]);
+                        // Remove this ID from existingQuestionIds
+                        $existingQuestionIds = array_diff($existingQuestionIds, [$questionData['id']]);
+                    }
                 } else {
-                    $questions[$index]['required'] = false;
+                    // Create new question
+                    $form->questions()->create([
+                        'type' => $questionData['type'],
+                        'question_text' => $questionData['text'],
+                        'options' => json_encode($questionData['options'] ?? []),
+                        'required' => $questionData['required'],
+                    ]);
                 }
             }
-            $request->merge(['questions' => $questions]);
+
+            // Delete questions that are no longer in the form
+            if (!empty($existingQuestionIds)) {
+                Question::whereIn('id', $existingQuestionIds)->delete();
+            }
+
+            DB::commit();
+            return redirect()->route('forms.show', $form)->with('success', 'Form updated successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error updating form: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'An error occurred while updating the form. Please try again.'])->withInput();
         }
-
-        // Validate the request
-        $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string|max:255',
-            'questions' => 'required|array',
-            'questions.*.id' => 'nullable|exists:questions,id',
-            'questions.*.type' => 'required|string|in:multiple_choice,checkbox,dropdown,text',
-            'questions.*.text' => 'required|string|max:255',
-            'questions.*.options' => 'nullable|array',
-            'questions.*.options.*' => 'nullable|string|max:255',
-            'questions.*.required' => 'boolean',
-        ]);
-
-        // Update form
-        $form->update([
-            'title' => $validatedData['title'],
-            'description' => $validatedData['description'],
-        ]);
-
-        // Clear existing questions
-        $form->questions()->delete();
-
-        // Create or update questions
-        foreach ($validatedData['questions'] as $questionData) {
-            $question = new Question([
-                'form_id' => $form->id,
-                'type' => $questionData['type'],
-                'question_text' => $questionData['text'],
-                'options' => json_encode($questionData['options'] ?? []),
-                'required' => $questionData['required'],
-            ]);
-            $question->save();
-        }
-
-        DB::commit();
-        return redirect()->route('forms.show', $form)->with('success', 'Form updated successfully.');
-    } catch (\Exception $e) {
-        DB::rollBack();
-        Log::error('Error updating form: ' . $e->getMessage());
-        return back()->withErrors(['error' => 'An error occurred while updating the form. Please try again.'])->withInput();
     }
-}
 
 
 
