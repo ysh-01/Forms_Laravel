@@ -17,6 +17,9 @@
         .shadow-custom {
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
+        .active-question {
+            border: 2px solid rgb(103,58,183) !important;
+        }
     </style>
 </head>
 
@@ -58,7 +61,7 @@
             </div>
             <div id="questions-section">
                 @foreach ($questions as $index => $question)
-                    <div class="question mb-4 p-3 border rounded bg-light" data-index="{{ $index }}">
+                    <div class="question mb-4 p-3 border rounded bg-light" data-index="{{ $index }}" onclick="setActiveQuestion(this)">
                         <input type="hidden" name="questions[{{ $index }}][id]" value="{{ $question->id }}">
                         <div class="form-group">
                             <select class="form-control question-type" id="question-type-{{ $index }}" name="questions[{{ $index }}][type]">
@@ -139,7 +142,7 @@
             const questionIndex = questionsSection.find('.question').length;
 
             const questionHtml = `
-                <div class="question mb-4 p-3 border rounded bg-light" data-index="${questionIndex}">
+                <div class="question mb-4 p-3 border rounded bg-light" data-index="${questionIndex}" onclick="setActiveQuestion(this)">
                     <input type="hidden" name="questions[${questionIndex}][id]" value="">
                     <div class="form-group">
                         <select class="form-control question-type" id="question-type-${questionIndex}" name="questions[${questionIndex}][type]" onchange="handleQuestionTypeChange(this)">
@@ -169,7 +172,13 @@
                 </div>
             `;
 
-            questionsSection.append(questionHtml);
+            if (activeQuestion) {
+                $(activeQuestion).after(questionHtml);
+            } else {
+                questionsSection.append(questionHtml);
+            }
+
+            updateQuestionIndices();
             updateAddButtonPosition();
         }
 
@@ -205,26 +214,16 @@
         }
 
         function updateAddButtonPosition() {
-            const questions = document.querySelectorAll("#questions-section .question");
             const sidebar = document.getElementById("moveableDiv");
 
-            if (questions.length > 0) {
-                const lastQuestion = questions[questions.length - 1];
-                const offsetTop = lastQuestion.offsetTop;
-                const sidebarHeight = sidebar.offsetHeight;
-                const containerHeight = document.getElementById("questions-section").offsetHeight;
+            if (activeQuestion) {
+                const rect = activeQuestion.getBoundingClientRect();
+                const containerRect = document.getElementById("questions-section").getBoundingClientRect();
+                const newPosition = rect.top - containerRect.top + rect.height;
 
-                const newPosition = offsetTop + lastQuestion.offsetHeight;
-                if (newPosition + sidebarHeight <= containerHeight) {
-                    sidebar.style.transform = `translateY(${newPosition + 75}px)`;
-                    console.log(`Moving sidebar to: ${newPosition + 75}px`);
-                } else {
-                    sidebar.style.transform = `translateY(${containerHeight - sidebarHeight + 75}px)`;
-                    console.log(`Moving sidebar to bottom of container`);
-                }
+                sidebar.style.transform = `translateY(${newPosition}px)`;
             } else {
                 sidebar.style.transform = `translateY(0px)`;
-                console.log("No questions, moving sidebar to top");
             }
         }
 
@@ -251,6 +250,17 @@
                 this.submit();
             });
         });
+
+        let activeQuestion = null;
+
+        function setActiveQuestion(questionElement) {
+            if (activeQuestion) {
+                activeQuestion.classList.remove('active-question');
+            }
+            activeQuestion = questionElement;
+            activeQuestion.classList.add('active-question');
+            updateAddButtonPosition();
+        }
     </script>
 </body>
 

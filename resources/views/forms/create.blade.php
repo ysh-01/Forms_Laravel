@@ -54,7 +54,7 @@
             </div>
         </div>
         <div class="section" id="questions_section">
-            <div class="question mb-4 p-4 border rounded bg-white shadow-sm">
+            <div class="question mb-4 p-4 border rounded bg-white shadow-sm onclick="setActiveQuestion(this)"">
                 <select class="form-control question_type mb-1" onchange="changeQuestionType(this)">
                     <option style="border:1px solid rgb(103,58,183);" value="">Select Question Type</option>
                     <option value="multiple_choice">Multiple Choice</option>

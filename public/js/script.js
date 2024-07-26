@@ -1,6 +1,13 @@
 document.addEventListener("DOMContentLoaded", function () {
     const questionsSection = document.getElementById("questions_section");
 
+    questionsSection.addEventListener('click', function(event) {
+        const questionDiv = event.target.closest('.question');
+        if (questionDiv) {
+            setActiveQuestion(questionDiv);
+        }
+    });
+
     function addOption(button) {
         const optionContainer = button.previousElementSibling;
         const optionDiv = document.createElement("div");
@@ -49,6 +56,17 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    let activeQuestion = null;
+
+function setActiveQuestion(questionElement) {
+    if (activeQuestion) {
+        activeQuestion.classList.remove('active-question');
+    }
+    activeQuestion = questionElement;
+    activeQuestion.classList.add('active-question');
+    updateAddButtonPosition();
+}
+
     let questionCount = document.querySelectorAll(".question").length;
 
     function addNewQuestion() {
@@ -78,8 +96,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 </label>
             </div>
         `;
-        questionsSection.appendChild(newQuestionDiv);
-        questionCount++;
+        if (activeQuestion) {
+            activeQuestion.insertAdjacentElement('afterend', newQuestionDiv);
+        } else {
+            questionsSection.appendChild(newQuestionDiv);
+        }
+
+        setActiveQuestion(newQuestionDiv);
         updateAddButtonPosition();
     }
 
@@ -93,32 +116,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updateAddButtonPosition() {
-        const questions = questionsSection.querySelectorAll(".question");
         const sidebar = document.getElementById("moveableDiv");
 
-        if (questions.length > 0) {
-            const lastQuestion = questions[questions.length - 1];
-            const offsetTop = lastQuestion.offsetTop;
-            const sidebarHeight = sidebar.offsetHeight;
-            const containerHeight = questionsSection.offsetHeight;
+    if (activeQuestion) {
+        const rect = activeQuestion.getBoundingClientRect();
+        const containerRect = questionsSection.getBoundingClientRect();
+        const newPosition = rect.top - containerRect.top + rect.height;
 
-            // Calculate the position of the last question relative to the top of the container
-            const newPosition = offsetTop + lastQuestion.offsetHeight;
-
-            // Ensure the sidebar stays within the bounds of the container
-            if (newPosition + sidebarHeight <= containerHeight) {
-                sidebar.style.transform = `translateY(${newPosition}px)`;
-                console.log(`Moving sidebar to: ${newPosition}px`);
-            } else {
-                sidebar.style.transform = `translateY(${
-                    containerHeight - sidebarHeight
-                }px)`;
-                console.log(`Moving sidebar to bottom of container`);
-            }
-        } else {
-            sidebar.style.transform = `translateY(0px)`;
-            console.log("No questions, moving sidebar to top");
-        }
+        sidebar.style.transform = `translateY(${newPosition}px)`;
+    } else {
+        sidebar.style.transform = `translateY(0px)`;
+    }
     }
 
     function saveForm() {
@@ -224,7 +232,6 @@ document.addEventListener("DOMContentLoaded", function () {
     window.saveForm = saveForm;
 
     // document.getElementById("add-question-button").addEventListener("click", addNewQuestion);
-
     document
         .getElementById("questions_section")
         .addEventListener("DOMNodeInserted", updateAddButtonPosition);
