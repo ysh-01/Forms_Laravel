@@ -10,7 +10,7 @@
 
             <form id="responseForm" action="{{ route('responses.submitForm', $form) }}" method="POST" class="mt-8">
                 @csrf
-                @foreach ($questions as $question)
+                @foreach ($questions->sortBy('order') as $question)
                     <div class="mt-6">
                         <label class="block font-medium text-base text-gray-800 mb-2">
                             {{ $question->question_text }}
