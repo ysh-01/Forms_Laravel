@@ -58,43 +58,57 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let activeQuestion = null;
 
-function setActiveQuestion(questionElement) {
-    if (activeQuestion) {
-        activeQuestion.classList.remove('active-question');
+    function setActiveQuestion(questionElement) {
+        if (activeQuestion) {
+            activeQuestion.classList.remove('active-question');
+        }
+        activeQuestion = questionElement;
+        activeQuestion.classList.add('active-question');
+        updateAddButtonPosition();
     }
-    activeQuestion = questionElement;
-    activeQuestion.classList.add('active-question');
-    updateAddButtonPosition();
-}
+
+    function updateQuestionOrder() {
+        const questions = document.querySelectorAll('#questions_section .question');
+        questions.forEach((question, index) => {
+            question.setAttribute('data-order', index);
+        });
+    }
+
+    new Sortable(document.getElementById('questions_section'), {
+        animation: 150,
+        handle: '.question',
+        onEnd: function() {
+            updateQuestionOrder();
+            updateAddButtonPosition();
+        }
+    });
 
     let questionCount = document.querySelectorAll(".question").length;
 
     function addNewQuestion() {
         const newQuestionDiv = document.createElement("div");
-        // newQuestionDiv.className = "question";
+        newQuestionDiv.className = "question mb-4 p-4 border rounded bg-white shadow-sm";
+        newQuestionDiv.setAttribute('data-order', document.querySelectorAll('#questions_section .question').length);
         newQuestionDiv.innerHTML = `
-           <div class="question mb-4 p-4 border rounded bg-white shadow-sm">
-                <select class="form-control question_type mb-1" onchange="changeQuestionType(this)">
-                    <option style="border:1px solid rgb(103,58,183);" value="">Select Question Type</option>
-                    <option value="multiple_choice">Multiple Choice</option>
-                    <option value="checkbox">Checkbox</option>
-                    <option value="dropdown">Dropdown</option>
-                    <option value="text">Text</option>
-                </select>
-                <input style="border:none; border-bottom: 2px solid rgb(103,58,183); border-radius:0" type="text" name="question" class="form-control question-input mb-3" placeholder="Type your question here" />
-                <div class="options-container mb-3">
-
-                </div>
-                <button class="btn btn-secondary add-option-btn" onclick="addOption(this)">
-                    Add Option
-                </button>
-                <button class="btn btn-md" id="moveUpButton" onclick="deleteQuestion(this);">
-                    <img src="/images/bin.png" alt="" width="20px" height="20px" />
-                </button>
-                <label class="ml-3">
-                    <input type="checkbox" class="required-checkbox"> Required
-                </label>
+            <select class="form-control question_type mb-1" onchange="changeQuestionType(this)">
+                <option style="border:1px solid rgb(103,58,183);" value="">Select Question Type</option>
+                <option value="multiple_choice">Multiple Choice</option>
+                <option value="checkbox">Checkbox</option>
+                <option value="dropdown">Dropdown</option>
+                <option value="text">Text</option>
+            </select>
+            <input style="border:none; border-bottom: 2px solid rgb(103,58,183); border-radius:0" type="text" name="question" class="form-control question-input mb-3" placeholder="Type your question here" />
+            <div class="options-container mb-3">
             </div>
+            <button class="btn btn-secondary add-option-btn" onclick="addOption(this)">
+                Add Option
+            </button>
+            <button class="btn btn-md" id="moveUpButton" onclick="deleteQuestion(this);">
+                <img src="/images/bin.png" alt="" width="20px" height="20px" />
+            </button>
+            <label class="ml-3">
+                <input type="checkbox" class="required-checkbox"> Required
+            </label>
         `;
         if (activeQuestion) {
             activeQuestion.insertAdjacentElement('afterend', newQuestionDiv);
@@ -111,6 +125,7 @@ function setActiveQuestion(questionElement) {
         if (questionContainer) {
             questionContainer.remove();
             questionCount--;
+            updateQuestionOrder();
             updateAddButtonPosition();
         }
     }
@@ -136,6 +151,31 @@ function setActiveQuestion(questionElement) {
         }
     }
 
+    var scrollToTopBtn = document.getElementById("scrollToTopBtn");
+    var rootElement = document.documentElement;
+
+    function handleScroll() {
+        // Show button when page is scrolled down 100px
+        var scrollTotal = rootElement.scrollHeight - rootElement.clientHeight;
+        if ((rootElement.scrollTop / scrollTotal) > 0.20) {
+            scrollToTopBtn.classList.remove("opacity-0", "invisible");
+            scrollToTopBtn.classList.add("opacity-100", "visible");
+        } else {
+            scrollToTopBtn.classList.remove("opacity-100", "visible");
+            scrollToTopBtn.classList.add("opacity-0", "invisible");
+        }
+    }
+
+    function scrollToTop() {
+        rootElement.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    }
+
+    scrollToTopBtn.addEventListener("click", scrollToTop);
+    document.addEventListener("scroll", handleScroll);
+
     function saveForm() {
         const formTitle = document.getElementById("form-title").value;
         const formDescription =
@@ -145,12 +185,10 @@ function setActiveQuestion(questionElement) {
 
         console.log(questions);
 
-        questions.forEach((question) => {
+        questions.forEach((question, index) => {
             const questionType = question.querySelector("select").value;
-            const questionText =
-                question.querySelector(".question-input").value;
-            const isRequired =
-                question.querySelector(".required-checkbox").checked;
+            const questionText = question.querySelector(".question-input").value;
+            const isRequired = question.querySelector(".required-checkbox").checked;
             let options = [];
 
             if (
@@ -168,6 +206,7 @@ function setActiveQuestion(questionElement) {
                 text: questionText,
                 options: options,
                 required: isRequired,
+                order: parseInt(question.getAttribute('data-order')) // Add this line
             });
 
             console.log({

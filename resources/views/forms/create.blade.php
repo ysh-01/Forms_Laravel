@@ -1,7 +1,3 @@
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Google-Form-Clone</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href={{ asset('css/app.css') }} />
@@ -24,7 +21,7 @@
 <body style="background-color: #f4f4f9;" >
     <nav class="bg-white p-4 shadow-md">
         <div class="mx-auto flex justify-between items-center">
-            <a href="{{ url('/') }}" style="color: rgb(103,58,183)"
+            <a href="{{ url('/forms') }}" style="color: rgb(103,58,183)"
                 class="text-3xl font-bold font-sans">LaraForms</a>
             <div class="relative dropdown">
                 <button id="profileMenuButton" class="flex items-center focus:outline-none">
@@ -54,7 +51,7 @@
             </div>
         </div>
         <div class="section" id="questions_section">
-            <div class="question mb-4 p-4 border rounded bg-white shadow-sm onclick="setActiveQuestion(this)"">
+            <div class="question mb-4 p-4 border rounded bg-white shadow-sm" onclick="setActiveQuestion(this)">
                 <select class="form-control question_type mb-1" onchange="changeQuestionType(this)">
                     <option style="border:1px solid rgb(103,58,183);" value="">Select Question Type</option>
                     <option value="multiple_choice">Multiple Choice</option>
@@ -109,10 +106,14 @@
         &nbsp;
         &nbsp;
     </div>
+    <button id="scrollToTopBtn" class="fixed bottom-5 right-5 bg-purple-600 text-white p-3 rounded-full shadow-lg transition-opacity duration-300 opacity-0 invisible">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+        </svg>
+    </button>
     <script src={{ asset('js/script.js') }}></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 </body>
 
 </html>

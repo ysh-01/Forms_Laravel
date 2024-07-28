@@ -16,7 +16,7 @@
 <body class="bg-gray-100">
     <nav class="bg-white p-2 shadow-gray-lg">
         <div class="mx-auto flex justify-between items-center">
-            <a href="{{ url('/') }}" style="color: rgb(103,58,183)"
+            <a href="{{ url('/forms') }}" style="color: rgb(103,58,183)"
                 class="text-3xl font-bold font-sans">LaraForms</a>
 
             <div class="relative dropdown">

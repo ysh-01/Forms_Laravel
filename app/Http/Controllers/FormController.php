@@ -45,7 +45,7 @@ class FormController extends Controller
 
     public function edit(Form $form)
     {
-        $questions = $form->questions;
+        $questions = $form->questions()->orderBy('order')->get();
         foreach ($questions as $question) {
             $question->options = json_decode($question->options, true);
         }
@@ -123,15 +123,14 @@ Contact us at (123) 456-7890 or no_reply@example.com
                 'user_id' => Auth::id(),
             ]);
 
-            foreach ($validatedData['questions'] as $questionData) {
-                $question = new Question([
-                    'form_id' => $form->id,
+            foreach ($validatedData['questions'] as $index => $questionData) {
+                $form->questions()->create([
                     'type' => $questionData['type'],
                     'question_text' => $questionData['text'],
                     'options' => json_encode($questionData['options'] ?? []),
                     'required' => $questionData['required'],
+                    'order' => $index,
                 ]);
-                $question->save();
             }
 
             DB::commit();
@@ -145,13 +144,17 @@ Contact us at (123) 456-7890 or no_reply@example.com
 
     public function show(Form $form)
     {
-        $form->load('questions.responses');
+        $form->load(['questions' => function ($query) {
+            $query->orderBy('order');
+        }, 'questions.responses']);
         return view('forms.show', compact('form'));
     }
 
     public function preview($id)
     {
-        $form = Form::findOrFail($id);
+        $form = Form::with(['questions' => function ($query) {
+            $query->orderBy('order');
+        }])->findOrFail($id);
         return view('forms.previewForm', compact('form'));
     }
 
@@ -193,7 +196,7 @@ Contact us at (123) 456-7890 or no_reply@example.com
             $existingQuestionIds = $form->questions()->pluck('id')->toArray();
 
             // Update or create questions
-            foreach ($validatedData['questions'] as $questionData) {
+            foreach ($validatedData['questions'] as $index => $questionData) {
                 if (isset($questionData['id'])) {
                     // Update existing question
                     $question = Question::find($questionData['id']);
@@ -203,6 +206,7 @@ Contact us at (123) 456-7890 or no_reply@example.com
                             'question_text' => $questionData['text'],
                             'options' => json_encode($questionData['options'] ?? []),
                             'required' => $questionData['required'],
+                            'order' => $index,
                         ]);
                         // Remove this ID from existingQuestionIds
                         $existingQuestionIds = array_diff($existingQuestionIds, [$questionData['id']]);
@@ -214,6 +218,7 @@ Contact us at (123) 456-7890 or no_reply@example.com
                         'question_text' => $questionData['text'],
                         'options' => json_encode($questionData['options'] ?? []),
                         'required' => $questionData['required'],
+                        'order' => $index,
                     ]);
                 }
             }

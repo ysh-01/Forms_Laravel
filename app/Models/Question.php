@@ -9,7 +9,7 @@ class Question extends Model
 {
     use SoftDeletes;
     use HasFactory;
-    protected $fillable = ['form_id', 'type', 'question_text', 'options', 'required'];
+    protected $fillable = ['form_id', 'type', 'question_text', 'options', 'required', 'order'];
 
     protected $casts = [
         'options' => 'array',
