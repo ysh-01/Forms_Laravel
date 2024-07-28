@@ -24,6 +24,21 @@ class Form extends Model
         return $this->hasMany(Question::class);
     }
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($form) {
+            if ($form->isForceDeleting()) {
+                // Force delete questions if form is permanently deleted
+                $form->questions()->forceDelete();
+            } else {
+                // Soft delete questions if form is soft-deleted
+                $form->questions()->delete();
+            }
+        });
+    }
+
     public function responses()
     {
         return $this->hasMany(Response::class);

@@ -198,6 +198,9 @@ Contact us at (123) 456-7890 or no_reply@example.com
             // Update or create questions
             foreach ($validatedData['questions'] as $index => $questionData) {
                 if (isset($questionData['id'])) {
+                    if($questionData['type'] == 'text'){
+                        $questionData['options'] = [];
+                    }
                     // Update existing question
                     $question = Question::find($questionData['id']);
                     if ($question) {
@@ -216,7 +219,7 @@ Contact us at (123) 456-7890 or no_reply@example.com
                     $form->questions()->create([
                         'type' => $questionData['type'],
                         'question_text' => $questionData['text'],
-                        'options' => json_encode($questionData['options'] ?? []),
+                        'options' => json_encode($questionData['options']),
                         'required' => $questionData['required'],
                         'order' => $index,
                     ]);
